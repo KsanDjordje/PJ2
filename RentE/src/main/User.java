@@ -2,6 +2,7 @@ package main;
 
 public class User {
 	private String name;
+	private int timesRented;
 	private Boolean isLocal;
 	private String userID;
 	private Integer driversLicense;
@@ -45,6 +46,12 @@ public class User {
 
 	public void setDriversLicense(Integer driversLicense) {
 		this.driversLicense = driversLicense;
+	}
+	public int getTimesRented() {
+		return timesRented;
+	}
+	public void updateTimesRented() {
+		this.timesRented++;
 	}
 	
 	/**

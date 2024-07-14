@@ -6,14 +6,25 @@ import java.io.File;
 import java.io.FileInputStream;
 public class PriceCalculator {
 	private Vehicle vehicle;
-	public double distanceNarrow;
-    public double distanceWide;
-    public double discount;
-    public double discountPromotion;
-    public double carUnitPrice;
-    public double bikeUnitPrice;
-    public double scooterUnitPrice;
-	public PriceCalculator(Rent rented) {
+	private double distanceNarrow;
+	private double distanceWide;
+    private double discount;
+    private double discountPromotion;
+    private double carUnitPrice;
+    private double bikeUnitPrice;
+    private double scooterUnitPrice;
+    private double timeTraveled;
+    private Boolean isWide;
+    private Boolean applyDiscount;
+    
+    private double price;
+    private double priceTotal;
+    private double discountTotal;
+    private double discountPromTotal;
+    //TODO
+	private boolean applyPromotion;
+    
+	public PriceCalculator(Rent rented, Boolean isWide, Boolean applyDiscount) {
 		Properties prop = new Properties();
 		//String basePath = new File("").getAbsolutePath();
 	    //System.out.println(basePath);
@@ -25,6 +36,13 @@ public class PriceCalculator {
 			prop.load(input);
 			
 			System.out.println(prop.getProperty("version"));
+			this.price = 0;
+		    this.priceTotal = 0;
+		    this.discountTotal = 0;
+		    this.discountPromTotal = 0 ;
+			this.isWide = isWide;
+			this.applyDiscount = applyDiscount;
+			this.timeTraveled = rented.getTimeUsed();
 			this.vehicle = rented.getVehicle();
 			this.distanceNarrow = Double.parseDouble(prop.getProperty("DISTANCE_NARROW"));
             this.distanceWide = Double.parseDouble(prop.getProperty("DISTANCE_WIDE"));
@@ -37,23 +55,19 @@ public class PriceCalculator {
 			e.printStackTrace();
 		}
 	}
-	public double distanceTraveled() {
-		double result = 0.0;
-		
-		
-		
-		return result;
-	}
+	
 	public double calculatePrice() {
 		double result = 0.0;
 		double distance = 0.0;
 		
-//		if() {
-//			
-//		}else {
-//			
-//		}
-//		
+		if(isWide) {
+			distance = this.timeTraveled * this.distanceWide;
+		}else {
+			distance = this.timeTraveled * this.distanceNarrow;	
+		}
+		
+		
+		
 		if(vehicle instanceof Car) {
 			result = distance * this.carUnitPrice;
 		}else if(vehicle instanceof Bicycle) {
@@ -61,12 +75,20 @@ public class PriceCalculator {
 		}else {
 			result = distance * this.scooterUnitPrice;
 		}
-		
+		this.price = result;
 		return applyDiscount(result);
+		//return applyDiscount(result);
 	}
 	public double applyDiscount(double price) {
 		double result = 0;
-		result = price - (price * this.discount);
-		return (result - (price * this.discountPromotion));
+		if(this.applyDiscount) {
+			this.discountTotal = price * this.discount;
+		}
+		result = price - this.discountTotal;
+
+		if(this.applyPromotion) {
+			this.discountPromTotal = price * this.discountPromotion;
+		}
+		return (result - this.discountPromTotal);
 	}
 }

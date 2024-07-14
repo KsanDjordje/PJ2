@@ -1,0 +1,10 @@
+Invoice
+-------
+User: NIGG
+Vehicle Type: Car
+Start Location: (2,5)
+End Location: (10,10)
+Duration: 1.0 seconds
+ID Document: IDRdIJhEnjS
+Driving License: 530227365
+
