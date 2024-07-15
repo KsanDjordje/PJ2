@@ -50,7 +50,7 @@ public class MapController {
                     rect.setStyle("-fx-fill: red;");
                 });
                 try {
-                    Thread.sleep(100); // Adjust the sleep time as needed
+                    Thread.sleep(400); // Adjust the sleep time as needed
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }

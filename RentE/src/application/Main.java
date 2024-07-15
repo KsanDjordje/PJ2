@@ -8,6 +8,7 @@ import Vehicles.Car;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import main.FileVehicleReader;
 import main.Location;
 import main.OutOfRadiusException;
 import main.PathFinder;
@@ -95,6 +96,7 @@ public class Main extends Application {
 				event.consume();
 				logout(primaryStage);
 			});
+			FileVehicleReader read = new FileVehicleReader("C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\ovo.csv");
 		}catch(OutOfRadiusException e) {
 			System.out.println("Invalid location");
 		}catch(Exception e) {
