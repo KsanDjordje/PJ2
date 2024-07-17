@@ -24,7 +24,7 @@ public class PriceCalculator {
     //TODO
 	private boolean applyPromotion;
     
-	public PriceCalculator(Rent rented, Boolean isWide, Boolean applyDiscount) {
+	public PriceCalculator(Rent rented, Boolean isWide, Boolean applyDiscount, Boolean applyPromotion) {
 		Properties prop = new Properties();
 		//String basePath = new File("").getAbsolutePath();
 	    //System.out.println(basePath);
@@ -42,6 +42,7 @@ public class PriceCalculator {
 		    this.discountPromTotal = 0 ;
 			this.isWide = isWide;
 			this.applyDiscount = applyDiscount;
+			this.applyPromotion = applyPromotion;
 			this.timeTraveled = rented.getTimeUsed();
 			this.vehicle = rented.getVehicle();
 			this.distanceNarrow = Double.parseDouble(prop.getProperty("DISTANCE_NARROW"));
@@ -75,7 +76,10 @@ public class PriceCalculator {
 		}else {
 			result = distance * this.scooterUnitPrice;
 		}
+		
+		
 		this.price = result;
+		this.priceApplyMalfunction(this.vehicle.hasMalfunction());
 		return applyDiscount(result);
 		//return applyDiscount(result);
 	}
@@ -90,5 +94,10 @@ public class PriceCalculator {
 			this.discountPromTotal = price * this.discountPromotion;
 		}
 		return (result - this.discountPromTotal);
+	}
+	public void priceApplyMalfunction(Boolean malfunction) {
+		if(malfunction == true) {
+			this.price = 0;
+		}
 	}
 }

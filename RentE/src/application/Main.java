@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.time.Month;
 
 import Vehicles.Car;
+import Vehicles.FileVehicleReader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import main.FileVehicleReader;
 import main.Location;
 import main.OutOfRadiusException;
 import main.PathFinder;
@@ -66,7 +66,7 @@ public class Main extends Application {
 				System.out.println(putanja[i]);
 			}
 			rent.generateInvoice();
-			PriceCalculator p = new PriceCalculator(rent, path.isWide(), rent.getUser().getTimesRented() % 10 == 0);
+			PriceCalculator p = new PriceCalculator(rent, path.isWide(), rent.getUser().getTimesRented() % 10 == 0, true);
 			System.out.println(p.calculatePrice());
 
 			System.out.println(path.isWide());
@@ -97,6 +97,8 @@ public class Main extends Application {
 				logout(primaryStage);
 			});
 			FileVehicleReader read = new FileVehicleReader("C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\ovo.csv");
+		
+		
 		}catch(OutOfRadiusException e) {
 			System.out.println("Invalid location");
 		}catch(Exception e) {

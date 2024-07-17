@@ -68,6 +68,9 @@ public abstract class Vehicle {
     	this.malfunctionDescription = description;
     	this.malfunctionTime = malfunctionTime;
     }
+    public Boolean hasMalfunction() {
+    	return this.hasMalfunction;
+    }
 	
     
 }

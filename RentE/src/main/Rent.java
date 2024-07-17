@@ -47,39 +47,39 @@ public class Rent {
 //		
 //	}
 
-	public static void main(String[] args) {
-		
-		User user = new User("NIGG");
-		LocalDateTime start = LocalDateTime.of(2024, Month.JULY, 4, 0, 0);
-		try {
-			Location loc = new Location(2,5);
-			
-			
-			Location locc = new Location(10,10);
-			LocalDate purchaseDate = LocalDate.of(2024, Month.JULY, 4);
-
-			Car auto = new Car("a", "a", "a", 50, 2, purchaseDate);
-			Rent rent = new Rent(user,start,loc,locc,1,auto);
-			
-			PathFinder path = new PathFinder(rent.getLocationStart(), rent.getLocationEnd());
-			Location[] putanja = path.getPathDijkstra();
-			for(int i = 0; i < putanja.length;i++) {
-				System.out.println(putanja[i]);
-			}
-			rent.generateInvoice();
-			PriceCalculator p = new PriceCalculator(rent, path.isWide(), rent.getUser().getTimesRented() % 10 == 0);
-			System.out.println(p.calculatePrice());
-
-			System.out.println(path.isWide());
-		}catch(OutOfRadiusException e) {
-			System.out.println("Invalid location");
-		}
-		
-		
-		
-				
-		
-	}
+//	public static void main(String[] args) {
+//		
+//		User user = new User("NIGG");
+//		LocalDateTime start = LocalDateTime.of(2024, Month.JULY, 4, 0, 0);
+//		try {
+//			Location loc = new Location(2,5);
+//			
+//			
+//			Location locc = new Location(10,10);
+//			LocalDate purchaseDate = LocalDate.of(2024, Month.JULY, 4);
+//
+//			Car auto = new Car("a", "a", "a", 50, 2, purchaseDate);
+//			Rent rent = new Rent(user,start,loc,locc,1,auto);
+//			
+//			PathFinder path = new PathFinder(rent.getLocationStart(), rent.getLocationEnd());
+//			Location[] putanja = path.getPathDijkstra();
+//			for(int i = 0; i < putanja.length;i++) {
+//				System.out.println(putanja[i]);
+//			}
+//			rent.generateInvoice();
+//			PriceCalculator p = new PriceCalculator(rent, path.isWide(), rent.getUser().getTimesRented() % 10 == 0);
+//			System.out.println(p.calculatePrice());
+//
+//			System.out.println(path.isWide());
+//		}catch(OutOfRadiusException e) {
+//			System.out.println("Invalid location");
+//		}
+//		
+//		
+//		
+//				
+//		
+//	}
 	public void generateInvoice() {
 		String vType = null;
 		if(vehicle instanceof Car) {

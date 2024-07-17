@@ -1,18 +1,22 @@
-package main;
+package SimulationPJ2;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FileVehicleReader {
+
+public class RentedList {
+
     String COMMA_DELIMITER = ",";
+    private List<LocalDateTime[]> dateTime = new ArrayList<>();
     private List<String[]> cars = new ArrayList<>();
     private List<String[]> bikes = new ArrayList<>();
     private List<String[]> scooters = new ArrayList<>();
 
-    public FileVehicleReader(String location){
+    public RentedList(String location){
 		List<List<String>> records = new ArrayList<>();
 		BufferedReader br = null;
 		try  {
