@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 
+import SimulationPJ2.FileRentedList;
 import Vehicles.Car;
 import Vehicles.FileVehicleReader;
 import javafx.application.Application;
@@ -97,7 +98,7 @@ public class Main extends Application {
 				logout(primaryStage);
 			});
 			FileVehicleReader read = new FileVehicleReader("C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\ovo.csv");
-		
+			FileRentedList f = new FileRentedList("C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\rented.csv");
 		
 		}catch(OutOfRadiusException e) {
 			System.out.println("Invalid location");
