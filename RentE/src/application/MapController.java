@@ -1,23 +1,29 @@
 package application;
 
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import main.Location;
 
-public class MapController {
+public class MapController implements Initializable{
 
 	@FXML
 	private Button logoutButton;
@@ -25,12 +31,15 @@ public class MapController {
 	private AnchorPane scenePane;
 	@FXML
 	private GridPane gridPane;
+	@FXML
+	private DatePicker myDatePicker;
+	@FXML
+	private TreeView<String> rentedTreeView;
 	
 	
     private ExecutorService executorService; // or however many threads you need
 
-	private int vehiclePositionX = 0; // Example starting position X
-    private int vehiclePositionY = 0; // Example starting position Y
+	
     
 	@FXML
 	private void initialize() {
@@ -68,51 +77,19 @@ public class MapController {
         executorService.shutdown();
     }
 
+	public void selectItem() {
+		TreeItem<String> item = rentedTreeView.getSelectionModel().getSelectedItem();
+		
+		if(item != null) {
+			System.out.println(item.getValue());
+		}
+	}
 	
-	
-	
-//	private void simulateMovement(int startX, int startY, int endX, int endY) {
-//        // Example: Move vehicle from startX, startY to endX, endY
-//        new Thread(() -> {
-//            for (int x = startX; x <= endX; x++) {
-//                for (int y = startY; y <= endY; y++) {
-//                    final int finalX = x;
-//                    final int finalY = y;
-//                    Platform.runLater(() -> moveVehicleTo(finalX, finalY)); // Update UI on JavaFX Application Thread
-//                    try {
-//                        Thread.sleep(100); // Example delay for simulation
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }).start();
-//    }
-//
-//    private void moveVehicleTo(int newX, int newY) {
-//    	
-//        // Reset previous tile color
-//        Rectangle previousTile = findTile(vehiclePositionX, vehiclePositionY);
-//        previousTile.setFill(Color.GREEN); // Reset color to default
-//
-//        // Update vehicle position
-//        vehiclePositionX = newX;
-//        vehiclePositionY = newY;
-//
-//        // Change color of the new tile
-//        Rectangle currentTile = findTile(vehiclePositionX, vehiclePositionY);
-//        currentTile.setFill(Color.RED); // Example color for current position
-//    }
-//
-//    private Rectangle findTile(int column, int row) {
-//        for (int i = 0; i < gridPane.getChildren().size(); i++) {
-//            Rectangle tile = (Rectangle) gridPane.getChildren().get(i);
-//            if (GridPane.getColumnIndex(tile) == column && GridPane.getRowIndex(tile) == row) {
-//                return tile;
-//            }
-//        }
-//        return null;
-//    }
+    public void getDate(ActionEvent event) {
+    	LocalDate myDate = myDatePicker.getValue();
+    	//TODO
+    	System.out.println(myDate.toString());
+    }
 	
 	
 	Stage stage;
@@ -130,6 +107,30 @@ public class MapController {
 			stage.close();
 		}
 		
+		
+	}
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		TreeItem<String> rootItem = new TreeItem<>("Vehicles");
+		TreeItem<String> carBrantchItem = new TreeItem<>("Cars");
+		TreeItem<String> bikeBrantchItem = new TreeItem<>("Bikes");
+		TreeItem<String> scooterBrantchItem = new TreeItem<>("Scooters");
+		
+		TreeItem<String> leafItem1 = new TreeItem<>("picture1");
+		TreeItem<String> leafItem2 = new TreeItem<>("picture2");	
+		TreeItem<String> leafItem3 = new TreeItem<>("video1");
+		TreeItem<String> leafItem4 = new TreeItem<>("video2");	
+		TreeItem<String> leafItem5 = new TreeItem<>("music1");
+		TreeItem<String> leafItem6 = new TreeItem<>("music2");
+		
+		carBrantchItem.getChildren().addAll(leafItem1, leafItem2);
+		bikeBrantchItem.getChildren().addAll(leafItem3, leafItem4);
+		scooterBrantchItem.getChildren().addAll(leafItem5, leafItem6);
+		
+		
+		
+		rootItem.getChildren().addAll(carBrantchItem,bikeBrantchItem,scooterBrantchItem);
+		rentedTreeView.setRoot(rootItem);
 		
 	}
 }

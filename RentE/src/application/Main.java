@@ -89,7 +89,7 @@ public class Main extends Application {
 			
 			
 			
-			Scene scene = new Scene(root);
+			Scene scene = new Scene(root, 1280 , 720);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -98,8 +98,8 @@ public class Main extends Application {
 				event.consume();
 				logout(primaryStage);
 			});
-			FileLoadData data = new FileLoadData("C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\ovo.csv","C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\rented.csv");
-			
+			FileLoadData data = new FileLoadData("ovo.csv","rented.csv");
+
 		
 		}catch(OutOfRadiusException e) {
 			System.out.println("Invalid location");
