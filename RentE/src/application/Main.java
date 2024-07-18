@@ -4,12 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import SimulationPJ2.FileRentedList;
+import SimulationPJ2.FileRentedListReader;
 import Vehicles.Car;
 import Vehicles.FileVehicleReader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import main.FileLoadData;
 import main.Location;
 import main.OutOfRadiusException;
 import main.PathFinder;
@@ -97,8 +98,8 @@ public class Main extends Application {
 				event.consume();
 				logout(primaryStage);
 			});
-			FileVehicleReader read = new FileVehicleReader("C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\ovo.csv");
-			FileRentedList f = new FileRentedList("C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\rented.csv");
+			FileLoadData data = new FileLoadData("C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\ovo.csv","C:\\Users\\W10\\git\\PJ2\\RentE\\src\\application\\rented.csv");
+			
 		
 		}catch(OutOfRadiusException e) {
 			System.out.println("Invalid location");

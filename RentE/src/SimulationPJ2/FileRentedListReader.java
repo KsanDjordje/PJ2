@@ -13,16 +13,16 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class FileRentedList {
+public class FileRentedListReader {
 
 	
     String COMMA_DELIMITER = ",";
-    private List<List<String>> cars = new ArrayList<>();
-    private List<List<String>> bikes = new ArrayList<>();
-    private List<List<String>> scooters = new ArrayList<>();
-    
+    private List<List<String>> rentedCars = new ArrayList<>();
+    private List<List<String>> rentedBikes = new ArrayList<>();
+    private List<List<String>> rentedScooters = new ArrayList<>();
+    private List<List<String>> sortedRentedList = new ArrayList<>();
 
-    public FileRentedList(String location){
+    public FileRentedListReader(String location){
 		
         List<List<String>> records = new ArrayList<>();
         Boolean isFirstRow = true;
@@ -45,19 +45,19 @@ public class FileRentedList {
         }
         
         records.sort(Comparator.comparing(record -> parseDate(record.get(0))));
-       
         for (List<String> record : records) {
             if (!record.isEmpty()) {
                 char startChar = record.get(2).charAt(0);
+                this.sortedRentedList.add(record);
                 switch (startChar) {
                     case 'A':
-                        cars.add(record);
+                        rentedCars.add(record);
                         break;
                     case 'B':
-                        bikes.add(record);
+                        rentedBikes.add(record);
                         break;
                     case 'T':
-                        scooters.add(record);
+                        rentedScooters.add(record);
                         break;
                     default:
                         break;
@@ -72,8 +72,7 @@ public class FileRentedList {
         DateTimeFormatter[] formatters = {
             DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"),
             DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"),
-            DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"),
-            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+            
         };
         for (DateTimeFormatter formatter : formatters) {
             try {
@@ -84,16 +83,21 @@ public class FileRentedList {
         }
         throw new IllegalArgumentException("Date format not supported for: " + dateStr);
     }
-
+    
+    public List<List<String>> getSortedList(){
+    	return sortedRentedList;
+    }
 	public List<List<String>> getCars() {
-		return cars;
+		return rentedCars;
 	}
 
 	public List<List<String>> getBikes() {
-		return bikes;
+		return rentedBikes;
 	}
 
 	public List<List<String>> getScooters() {
-		return scooters;
+		return rentedScooters;
 	}
+
+	
 }
