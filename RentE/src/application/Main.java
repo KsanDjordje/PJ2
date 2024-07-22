@@ -3,6 +3,7 @@ package application;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 
 import SimulationPJ2.FileRentedListReader;
 import Vehicles.Car;
@@ -29,9 +30,16 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Map.fxml"));
+			
+			FileLoadData data = new FileLoadData("ovo.csv","rented.csv");
+			for(List<String> temp : data.getSortedList()) {
+				System.out.println(temp);
+			}
             Parent root = loader.load();
             MapController mapController = loader.getController();
+            mapController.loadData(data);
 			//Parent root = FXMLLoader.load(getClass().getResource("Map.fxml"));
 			User user = new User("NIGG");
 			LocalDateTime start = LocalDateTime.of(2024, Month.JULY, 4, 0, 0);
@@ -74,7 +82,7 @@ public class Main extends Application {
 			System.out.println(path.isWide());
 			
 			
-			mapController.initializeExecutorService(5);
+			mapController.initializeExecutorService(10);
 			mapController.simulateMovement(putanja);
 			mapController.simulateMovement(putanja2);
 			mapController.simulateMovement(putanja3);
@@ -98,8 +106,7 @@ public class Main extends Application {
 				event.consume();
 				logout(primaryStage);
 			});
-			FileLoadData data = new FileLoadData("ovo.csv","rented.csv");
-
+			
 		
 		}catch(OutOfRadiusException e) {
 			System.out.println("Invalid location");

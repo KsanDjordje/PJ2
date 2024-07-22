@@ -2,6 +2,8 @@ package application;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import main.FileLoadData;
 import main.Location;
 
 public class MapController implements Initializable{
@@ -35,7 +38,7 @@ public class MapController implements Initializable{
 	private DatePicker myDatePicker;
 	@FXML
 	private TreeView<String> rentedTreeView;
-	
+	private FileLoadData data;
 	
     private ExecutorService executorService; // or however many threads you need
 
@@ -57,6 +60,7 @@ public class MapController implements Initializable{
                     Rectangle rect = getRectangleAtLocation(loc);
                     // Update rectangle color or any other property
                     rect.setStyle("-fx-fill: red;");
+                    
                 });
                 try {
                     Thread.sleep(400); // Adjust the sleep time as needed
@@ -82,15 +86,28 @@ public class MapController implements Initializable{
 		
 		if(item != null) {
 			System.out.println(item.getValue());
+			
 		}
 	}
 	
     public void getDate(ActionEvent event) {
-    	LocalDate myDate = myDatePicker.getValue();
-    	//TODO
-    	System.out.println(myDate.toString());
+    	
+    	updateTree();
+    	System.out.println(getDate());
     }
-	
+    public String getDate() {
+        LocalDate myDate = myDatePicker.getValue();
+        if (myDate != null) {
+            // Format the date to "dd.MM.yyyy"
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.M.yyyy");
+            return myDate.format(formatter);
+        } else {
+            return ""; // Return an empty string if no date is selected
+        }
+    }
+    
+
+    
 	
 	Stage stage;
 	
@@ -109,12 +126,75 @@ public class MapController implements Initializable{
 		
 		
 	}
+	public void updateTree() {
+		
+		String targetDate = getDate();
+		TreeItem<String> rootItem = new TreeItem<>("Vehicles");
+        if (data.getRentedCars().size() > 0) {
+            TreeItem<String> carBranchItem = new TreeItem<>("Cars");
+            for(List<String> val : data.getRentedCars()) {
+            	
+            	String[] temp = val.get(0).split(" ");
+            	if(temp[0].equals(targetDate)) {
+            		
+            		TreeItem<String> carItem = new TreeItem<>(val.get(2));
+                    carBranchItem.getChildren().add(carItem);
+            	}
+            	
+            }
+            
+            rootItem.getChildren().add(carBranchItem);
+        }
+        if (data.getRentedBikes().size() > 0) {
+            TreeItem<String> bikeBranchItem = new TreeItem<>("Bikes");
+            
+            for(List<String> val : data.getRentedBikes()) {
+            	
+            	String[] temp = val.get(0).split(" ");
+            	if(temp[0].equals(targetDate)) {
+            		
+            		TreeItem<String> carItem = new TreeItem<>(val.get(2));
+            		bikeBranchItem.getChildren().add(carItem);
+            	}
+            	
+            }
+            
+            rootItem.getChildren().add(bikeBranchItem);
+            
+            
+        }
+        if (data.getRentedScooters().size() > 0) {
+            TreeItem<String> scooterBranchItem = new TreeItem<>("Scooters");
+            
+            for(List<String> val : data.getRentedScooters()) {
+            	
+            	String[] temp = val.get(0).split(" ");
+            	if(temp[0].equals(targetDate)) {
+            		
+            		TreeItem<String> carItem = new TreeItem<>(val.get(2));
+            		scooterBranchItem.getChildren().add(carItem);
+            	}
+            	
+            }
+            
+            
+            
+            rootItem.getChildren().add(scooterBranchItem);
+        }
+
+        // Set the root item to the TreeView
+        rentedTreeView.setRoot(rootItem);
+	}
+	public void loadData(FileLoadData data) {
+		 this.data = data;
+		 this.updateTree();
+	    
+	}
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		TreeItem<String> rootItem = new TreeItem<>("Vehicles");
-		TreeItem<String> carBrantchItem = new TreeItem<>("Cars");
-		TreeItem<String> bikeBrantchItem = new TreeItem<>("Bikes");
-		TreeItem<String> scooterBrantchItem = new TreeItem<>("Scooters");
+		
+		
+		
 		
 		TreeItem<String> leafItem1 = new TreeItem<>("picture1");
 		TreeItem<String> leafItem2 = new TreeItem<>("picture2");	
@@ -123,14 +203,6 @@ public class MapController implements Initializable{
 		TreeItem<String> leafItem5 = new TreeItem<>("music1");
 		TreeItem<String> leafItem6 = new TreeItem<>("music2");
 		
-		carBrantchItem.getChildren().addAll(leafItem1, leafItem2);
-		bikeBrantchItem.getChildren().addAll(leafItem3, leafItem4);
-		scooterBrantchItem.getChildren().addAll(leafItem5, leafItem6);
-		
-		
-		
-		rootItem.getChildren().addAll(carBrantchItem,bikeBrantchItem,scooterBrantchItem);
-		rentedTreeView.setRoot(rootItem);
 		
 	}
 }

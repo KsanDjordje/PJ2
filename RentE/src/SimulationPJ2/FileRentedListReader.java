@@ -5,12 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 
 
 public class FileRentedListReader {
@@ -98,6 +96,36 @@ public class FileRentedListReader {
 	public List<List<String>> getScooters() {
 		return rentedScooters;
 	}
+	public void setSortedList(List<List<String>> list){
+    	this.sortedRentedList = list ;
+    }
+	public void setCars(List<List<String>> list) {
+		this.rentedCars = list;
+	}
 
+	public void setBikes(List<List<String>> list) {
+		this.rentedBikes = list ;
+	}
+
+	public  void setScooters(List<List<String>> list) {
+		this.rentedScooters = list;
+	}
+	
+	public List<List<String>> removeIncorrectData(List<List<String>> vehicles){
+		List<List<String>> result = new ArrayList<>();
+	    
+	    List<List<String>> tempSortedRentedList = this.sortedRentedList;
+
+	    for (List<String> record : tempSortedRentedList) {
+	        for (List<String> veh : vehicles) {
+	            if (record.get(2).equals(veh.get(0))) { 
+	                result.add(record);
+	                break; // If match is found break inner loop
+	            }
+	        }
+	    }
+
+	    return result;
+    }
 	
 }
