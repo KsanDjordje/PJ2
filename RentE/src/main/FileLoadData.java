@@ -11,15 +11,14 @@ public class FileLoadData {
 	
 	public FileLoadData(String vehicleListLocation, String rentedListLocation){
 		FileRentedListReader rented = new FileRentedListReader(rentedListLocation);
-		FileVehicleReader vehicleList = new FileVehicleReader(vehicleListLocation);
+		this.vehicleList = new FileVehicleReader(vehicleListLocation);
 		rented.setSortedList(rented.removeIncorrectData(vehicleList.getAllVehicles()));
 		rented.setCars(rented.removeIncorrectData(vehicleList.getCars()));
 		rented.setBikes(rented.removeIncorrectData(vehicleList.getBikes()));
 		rented.setScooters(rented.removeIncorrectData(vehicleList.getScooters()));
 		this.rented = rented;
-		this.vehicleList = vehicleList;
-		
-		
+		 
+
 		
 	}
 	
@@ -49,6 +48,9 @@ public class FileLoadData {
 
 	public List<List<String>> getScooters() {
 		return vehicleList.getScooters();
+	}
+	public List<List<String>> getAllVehicles(){
+		return vehicleList.getAllVehicles();
 	}
 
 	

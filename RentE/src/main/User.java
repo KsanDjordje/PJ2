@@ -1,5 +1,7 @@
 package main;
 
+import SimulationPJ2.SimulateUser;
+
 public class User {
 	private String name;
 	private int timesRented;
@@ -8,10 +10,11 @@ public class User {
 	private Integer driversLicense;
 
 	public  User(String name) {
+		SimulateUser sim = new SimulateUser();
 		this.name = name;
-		this.setIsLocal(null);
-		this.setUserID(null);
-		this.setDriversLicense(null);
+		this.setIsLocal(sim.generateIsLocal());
+		this.setUserID(sim.generateUserID(isLocal));
+		this.setDriversLicense(sim.generateDriversLicense());
 	}
 	public  User(String name, Boolean isLocal, String userID, int driversLicense) {
 		this.name = name;
@@ -54,9 +57,6 @@ public class User {
 		this.timesRented++;
 	}
 	
-	/**
-	 * Helper functions to 
-	 * 
-	 */
+	
 	
 }

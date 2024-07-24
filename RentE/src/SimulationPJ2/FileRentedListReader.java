@@ -3,12 +3,11 @@ package SimulationPJ2;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import main.MyDateParser;
 
 
 public class FileRentedListReader {
@@ -21,7 +20,7 @@ public class FileRentedListReader {
     private List<List<String>> sortedRentedList = new ArrayList<>();
 
     public FileRentedListReader(String location){
-		
+		MyDateParser dp = new MyDateParser();
         List<List<String>> records = new ArrayList<>();
         Boolean isFirstRow = true;
         try (BufferedReader br = new BufferedReader(new FileReader(location))) {
@@ -42,7 +41,7 @@ public class FileRentedListReader {
             e.printStackTrace();
         }
         
-        records.sort(Comparator.comparing(record -> parseDate(record.get(0))));
+        records.sort(Comparator.comparing(record -> dp.parseLocalDateTime(record.get(0))));
         for (List<String> record : records) {
             if (!record.isEmpty()) {
                 char startChar = record.get(2).charAt(0);
@@ -66,21 +65,7 @@ public class FileRentedListReader {
         
     }
     
-    private static LocalDateTime parseDate(String dateStr) {
-        DateTimeFormatter[] formatters = {
-            DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"),
-            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"),
-            
-        };
-        for (DateTimeFormatter formatter : formatters) {
-            try {
-                return LocalDateTime.parse(dateStr, formatter);
-            } catch (Exception e) {
-                
-            }
-        }
-        throw new IllegalArgumentException("Date format not supported for: " + dateStr);
-    }
+    
     
     public List<List<String>> getSortedList(){
     	return sortedRentedList;

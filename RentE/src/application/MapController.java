@@ -8,7 +8,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javafx.application.Platform;
+import Vehicles.Car;
+import Vehicles.Vehicle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,6 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import main.FileLoadData;
 import main.Location;
+import main.Rent;
 
 public class MapController implements Initializable{
 
@@ -39,7 +41,8 @@ public class MapController implements Initializable{
 	@FXML
 	private TreeView<String> rentedTreeView;
 	private FileLoadData data;
-	
+	Vehicle[] vehicleList;
+	Rent[] rentedList;
     private ExecutorService executorService; // or however many threads you need
 
 	
@@ -138,6 +141,17 @@ public class MapController implements Initializable{
             	if(temp[0].equals(targetDate)) {
             		
             		TreeItem<String> carItem = new TreeItem<>(val.get(2));
+            		for(Vehicle veh : vehicleList) {
+            			if(veh instanceof Car) {
+            				Car car = (Car)veh;
+            				if(car.getId().equals(val.get(2))) {
+            					TreeItem<String> carBat = new TreeItem<>("Battery: " + String.valueOf(car.getCurrentBatteryLevel()));
+            					
+            					carItem.getChildren().addAll(carBat);
+            				}
+            			}
+            			
+            		}
                     carBranchItem.getChildren().add(carItem);
             	}
             	
@@ -185,23 +199,18 @@ public class MapController implements Initializable{
         // Set the root item to the TreeView
         rentedTreeView.setRoot(rootItem);
 	}
-	public void loadData(FileLoadData data) {
+	public void loadData(FileLoadData data, Vehicle[] veh,Rent[] rented) {
 		 this.data = data;
+		 this.vehicleList = veh;
+		 this.rentedList = rented;
+		 
 		 this.updateTree();
 	    
 	}
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		
-		
-		
-		
-		TreeItem<String> leafItem1 = new TreeItem<>("picture1");
-		TreeItem<String> leafItem2 = new TreeItem<>("picture2");	
-		TreeItem<String> leafItem3 = new TreeItem<>("video1");
-		TreeItem<String> leafItem4 = new TreeItem<>("video2");	
-		TreeItem<String> leafItem5 = new TreeItem<>("music1");
-		TreeItem<String> leafItem6 = new TreeItem<>("music2");
+
 		
 		
 	}

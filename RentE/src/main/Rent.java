@@ -2,9 +2,7 @@ package main;
 import SimulationPJ2.*;
 
 import java.io.PrintWriter;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 
 import Vehicles.*;
 public class Rent {
@@ -14,8 +12,9 @@ public class Rent {
 	private Location locationEnd;
 	private double timeUsed;
 	private Vehicle vehicle;
-	
-	public Rent(User user, LocalDateTime dateTime, Location locationStart, Location locationEnd, int timeUsed, Vehicle vehicle) {
+	private Boolean promotion;
+	PriceCalculator price;
+	public Rent(User user, LocalDateTime dateTime, Location locationStart, Location locationEnd, int timeUsed, Vehicle vehicle, Boolean promotion) {
 	
 		if(vehicle instanceof Car) {
 			if((user.getIsLocal() != null) && (user.getUserID() != null) && (user.getDriversLicense() != null)) {
@@ -34,53 +33,18 @@ public class Rent {
 		this.locationEnd = locationEnd;
 		this.timeUsed = timeUsed;
 		this.vehicle = vehicle;
+		this.promotion = promotion;
 		
+		calculatePrice();
 	}
-	
+	public void calculatePrice() {
+		PathFinder path = new PathFinder(locationStart, locationEnd);
+		this.price = new PriceCalculator(vehicle,timeUsed, path.isWide(),user.getTimesRented() % 10 == 0, promotion);
+		price.calculatePrice();
+	}
 
-//	public Rent(User user, LocalDateTime dateTime, Location locationStart, Location locationEnd, int timeUsed, Vehicle vehicle, Boolean isLocal) {
-//		this.user = user;
-//		this.dateTime = dateTime;
-//		this.locationStart = locationStart;
-//		this.locationEnd = locationEnd;
-//		this.timeUsed = timeUsed;
-//		
-//	}
 
-//	public static void main(String[] args) {
-//		
-//		User user = new User("NIGG");
-//		LocalDateTime start = LocalDateTime.of(2024, Month.JULY, 4, 0, 0);
-//		try {
-//			Location loc = new Location(2,5);
-//			
-//			
-//			Location locc = new Location(10,10);
-//			LocalDate purchaseDate = LocalDate.of(2024, Month.JULY, 4);
-//
-//			Car auto = new Car("a", "a", "a", 50, 2, purchaseDate);
-//			Rent rent = new Rent(user,start,loc,locc,1,auto);
-//			
-//			PathFinder path = new PathFinder(rent.getLocationStart(), rent.getLocationEnd());
-//			Location[] putanja = path.getPathDijkstra();
-//			for(int i = 0; i < putanja.length;i++) {
-//				System.out.println(putanja[i]);
-//			}
-//			rent.generateInvoice();
-//			PriceCalculator p = new PriceCalculator(rent, path.isWide(), rent.getUser().getTimesRented() % 10 == 0);
-//			System.out.println(p.calculatePrice());
-//
-//			System.out.println(path.isWide());
-//		}catch(OutOfRadiusException e) {
-//			System.out.println("Invalid location");
-//		}
-//		
-//		
-//		
-//				
-//		
-//	}
-	public void generateInvoice() {
+	public void generateInvoice(String fileName) {
 		String vType = null;
 		if(vehicle instanceof Car) {
 			vType = "Car";
@@ -91,28 +55,56 @@ public class Rent {
         }else {
         	vType = "Ne znam kako smo do ovdje dosli...";
         }
-        String invoice = "Invoice\n" +
-                "-------\n" +
-                "User: " + user.getName() + "\n" +
-                "Vehicle Type: " + vType + "\n" +
-                "Start Location: " + this.locationStart + "\n" +
-                "End Location: " + this.locationEnd + "\n" +
-                "Duration: " + this.timeUsed + " seconds\n";
+		double fullPrice = price.getFullPrice();
+	    double discountFromPromotion = price.getDiscountedAmmountFromPromotion();
+	    double discountFromNum = price.getDiscountedAmmountFromNum();
+	    double priceDiscounted = price.getPriceDiscounted();
+	    double priceTotal = price.getPrice();
 
-        if (vehicle instanceof Car) {
-            invoice += "ID Document: " + user.getUserID() + "\n" +
-                    "Driving License: " + user.getDriversLicense() + "\n";
-        }
+	    String invoice = "Invoice\n" +
+	            "-------\n" +
+	            "User: " + user.getName() + "\n" +
+	            "Vehicle Type: " + vType + "\n" +
+	            "Start Location: " + this.locationStart + "\n" +
+	            "End Location: " + this.locationEnd + "\n" +
+	            "Duration: " + this.timeUsed + " seconds\n" +
+	            "Full Price: $" + String.format("%.2f", fullPrice) + "\n" +
+	            "Discount from Promotion: -$" + String.format("%.2f", discountFromPromotion) + "\n" +
+	            "Discount from Quantity: -$" + String.format("%.2f", discountFromNum) + "\n" +
+	            "Discounted Price: $" + String.format("%.2f", priceDiscounted) + "\n" +
+	            "Total Price: $" + String.format("%.2f", priceTotal) + "\n";
 
-        System.out.println(invoice);
+	    if (vehicle instanceof Car) {
+	        invoice += "ID Document: " + user.getUserID() + "\n" +
+	                "Driving License: " + user.getDriversLicense() + "\n";
+	    }
+
+        //System.out.println(invoice);
 
         // Save to file
-        try (PrintWriter writer = new PrintWriter("invoice.txt")) {
+        try (PrintWriter writer = new PrintWriter(fileName+".txt")) {
             writer.println(invoice);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+	
+	public double getTotal() {
+        return price.getPrice();
+    }
+
+    public double getPromo() {
+        return price.getDiscountedAmmountFromPromotion();
+    }
+
+    public double getDiscount() {
+        return price.getDiscountedAmmountFromNum();
+    }
+
+    public double getTotalDiscount() {
+        return price.getPriceDiscounted();
+    }
+	
 	public User getUser() {
 		return user;
 	}

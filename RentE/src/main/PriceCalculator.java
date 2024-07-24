@@ -16,15 +16,14 @@ public class PriceCalculator {
     private double timeTraveled;
     private Boolean isWide;
     private Boolean applyDiscount;
-    
+	private boolean applyPromotion;
     private double price;
     private double priceTotal;
     private double discountTotal;
     private double discountPromTotal;
-    //TODO
-	private boolean applyPromotion;
+    private double priceDiscounted;
     
-	public PriceCalculator(Rent rented, Boolean isWide, Boolean applyDiscount, Boolean applyPromotion) {
+	public PriceCalculator(Vehicle vehicle, double timeUsed, Boolean isWide, Boolean applyDiscount, Boolean applyPromotion) {
 		Properties prop = new Properties();
 		//String basePath = new File("").getAbsolutePath();
 	    //System.out.println(basePath);
@@ -35,20 +34,21 @@ public class PriceCalculator {
 		try(FileInputStream input = new FileInputStream(path)){
 			prop.load(input);
 			
-			System.out.println(prop.getProperty("version"));
+			//System.out.println(prop.getProperty("version"));
 			this.price = 0;
 		    this.priceTotal = 0;
 		    this.discountTotal = 0;
 		    this.discountPromTotal = 0 ;
+		    this.priceDiscounted = 0;
 			this.isWide = isWide;
 			this.applyDiscount = applyDiscount;
 			this.applyPromotion = applyPromotion;
-			this.timeTraveled = rented.getTimeUsed();
-			this.vehicle = rented.getVehicle();
+			this.timeTraveled = timeUsed;
+			this.vehicle = vehicle;
 			this.distanceNarrow = Double.parseDouble(prop.getProperty("DISTANCE_NARROW"));
             this.distanceWide = Double.parseDouble(prop.getProperty("DISTANCE_WIDE"));
-            this.discount = Double.parseDouble(prop.getProperty("DISCOUNT")) / 100;
-            this.discountPromotion = Double.parseDouble(prop.getProperty("DISCOUNT_PROM")) / 100;
+            this.discount = Double.parseDouble(prop.getProperty("DISCOUNT"));
+            this.discountPromotion = Double.parseDouble(prop.getProperty("DISCOUNT_PROM"));
             this.carUnitPrice = Double.parseDouble(prop.getProperty("CAR_UNIT_PRICE"));
             this.bikeUnitPrice = Double.parseDouble(prop.getProperty("BIKE_UNIT_PRICE"));
             this.scooterUnitPrice = Double.parseDouble(prop.getProperty("SCOOTER_UNIT_PRICE"));
@@ -58,7 +58,6 @@ public class PriceCalculator {
 	}
 	
 	public double calculatePrice() {
-		double result = 0.0;
 		double distance = 0.0;
 		
 		if(isWide) {
@@ -70,34 +69,54 @@ public class PriceCalculator {
 		
 		
 		if(vehicle instanceof Car) {
-			result = distance * this.carUnitPrice;
+			this.price = distance * this.carUnitPrice;
 		}else if(vehicle instanceof Bicycle) {
-			result = distance * this.bikeUnitPrice;
+			this.price = distance * this.bikeUnitPrice;
 		}else {
-			result = distance * this.scooterUnitPrice;
+			this.price = distance * this.scooterUnitPrice;
 		}
 		
 		
-		this.price = result;
 		this.priceApplyMalfunction(this.vehicle.hasMalfunction());
-		return applyDiscount(result);
+		this.priceTotal = applyDiscount();
+		return this.priceTotal;
 		//return applyDiscount(result);
 	}
-	public double applyDiscount(double price) {
-		double result = 0;
+	public double applyDiscount() {
 		if(this.applyDiscount) {
-			this.discountTotal = price * this.discount;
+			this.discountTotal = this.price * this.discount;
 		}
-		result = price - this.discountTotal;
-
 		if(this.applyPromotion) {
-			this.discountPromTotal = price * this.discountPromotion;
+			this.discountPromTotal = this.price * this.discountPromotion;
 		}
-		return (result - this.discountPromTotal);
+		this.priceDiscounted = this.discountTotal + this.discountPromTotal;
+		
+		return (price - this.priceDiscounted);
 	}
+	
 	public void priceApplyMalfunction(Boolean malfunction) {
 		if(malfunction == true) {
 			this.price = 0;
 		}
+	}
+	
+	public double getDiscountedAmmountFromPromotion() {
+		return discountPromTotal;
+	}
+	
+	public double getDiscountedAmmountFromNum() {
+		return discountTotal;
+	}
+	
+	public double getPriceDiscounted() {
+		return priceDiscounted;
+	}
+	
+	public double getFullPrice() {
+		return this.price;
+	}
+	
+	public double getPrice() {
+		return this.priceTotal;
 	}
 }

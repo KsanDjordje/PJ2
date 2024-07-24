@@ -5,6 +5,11 @@ Vehicle Type: Car
 Start Location: (2,5)
 End Location: (10,10)
 Duration: 1.0 seconds
-ID Document: IDĆGžJDžDhh
-Driving License: 674388573
+Full Price: $5.00
+Discount from Promotion: -$5.00
+Discount from Quantity: -$0.75
+Discounted Price: $5.75
+Total Price: $-0.75
+ID Document: IDsŠ6JFO4J2
+Driving License: 256065722
 

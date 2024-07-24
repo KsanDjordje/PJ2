@@ -5,13 +5,27 @@ public class Location {
 	private int y;
 	
 	public Location(int x, int y) throws OutOfRadiusException {
-		if(x >= 20 || x < 0 || y >= 20 || y < 0) {
-			throw new OutOfRadiusException();
-		}else {
-			this.x = x;
-			this.y = y;
-		}		
+		validateCoordinates(x, y);
+        this.x = x;
+        this.y = y;		
 	}
+	public Location(String str , String str2) throws OutOfRadiusException{
+		
+		str = str.replace("\"", "");
+		str2 = str2.replace("\"", "");
+
+        int x = Integer.parseInt(str);
+        int y = Integer.parseInt(str2);
+        validateCoordinates(x, y);
+        this.x = x;
+        this.y = y;
+	}
+	
+	private void validateCoordinates(int x, int y) throws OutOfRadiusException {
+        if(x >= 20 || x < 0 || y >= 20 || y < 0) {
+            throw new OutOfRadiusException();
+        }
+    }
 	
 	@Override
 	public String toString() {
