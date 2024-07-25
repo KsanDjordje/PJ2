@@ -1,15 +1,15 @@
 Invoice
 -------
-User: NIGG
+User: test
 Vehicle Type: Car
 Start Location: (2,5)
 End Location: (10,10)
 Duration: 1.0 seconds
 Full Price: $5.00
-Discount from Promotion: -$5.00
+Discount from Promotion: -$1.50
 Discount from Quantity: -$0.75
-Discounted Price: $5.75
-Total Price: $-0.75
-ID Document: IDsŠ6JFO4J2
-Driving License: 256065722
+Discounted Price: $2.25
+Total Price: $2.75
+ID Document: PPTvlPDF0aRY2
+Driving License: 410052825
 

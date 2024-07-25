@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,7 +13,11 @@ import Vehicles.Car;
 import Vehicles.Vehicle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -40,6 +45,10 @@ public class MapController implements Initializable{
 	private DatePicker myDatePicker;
 	@FXML
 	private TreeView<String> rentedTreeView;
+	@FXML
+	private Parent root;
+	private Stage stage;
+	private Scene scene;
 	private FileLoadData data;
 	Vehicle[] vehicleList;
 	Rent[] rentedList;
@@ -112,9 +121,22 @@ public class MapController implements Initializable{
 
     
 	
-	Stage stage;
 	
-	public void logout(ActionEvent event) {
+	
+	public void logout(ActionEvent event) throws IOException {
+		
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
+		root = loader.load();
+		
+		Controller controller= loader.getController();
+		
+		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(root);
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	public void closeProgram(ActionEvent event) {
 		
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Logout");
