@@ -3,8 +3,10 @@ package SimulationPJ2;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import main.MyDateParser;
@@ -98,9 +100,9 @@ public class FileRentedListReader {
 	
 	public List<List<String>> removeIncorrectData(List<List<String>> vehicles){
 		List<List<String>> result = new ArrayList<>();
+		MyDateParser dp = new MyDateParser();
+	    List<List<String>> tempSortedRentedList = new ArrayList<>(this.sortedRentedList);
 	    
-	    List<List<String>> tempSortedRentedList = this.sortedRentedList;
-
 	    for (List<String> record : tempSortedRentedList) {
 	        for (List<String> veh : vehicles) {
 	            if (record.get(2).equals(veh.get(0))) { 
@@ -109,8 +111,43 @@ public class FileRentedListReader {
 	            }
 	        }
 	    }
+	    tempSortedRentedList = result;
+        Iterator<List<String>> iterator = tempSortedRentedList.iterator();
 
-	    return result;
+        while(iterator.hasNext()) {
+        	List<String> record = iterator.next();
+        	LocalDateTime recordTime = dp.parseLocalDateTime(record.get(0));
+        	String recordID = record.get(2);
+        	double recordDuration = Double.parseDouble(record.get(7));
+        	// this is if we count the time in the rented file list as minutes...
+        	LocalDateTime timeFinal = recordTime.plusMinutes((long) recordDuration);
+        	boolean shouldRemove = false;
+        	
+        	for (List<String> otherRecord : sortedRentedList) {
+                if (record == otherRecord) continue;
+        	
+                LocalDateTime otherRecord0 = dp.parseLocalDateTime(otherRecord.get(0));
+                String otherRecord2 = otherRecord.get(2);
+                double otherRecord8 = Double.parseDouble(otherRecord.get(7));
+                
+                LocalDateTime otherRecordTimeWithMinutesAdded = otherRecord0.plusMinutes((long) otherRecord8);
+                
+                if ((((recordTime.equals(otherRecord0) && recordID.equals(otherRecord2)) &&
+                    timeFinal.isAfter(otherRecordTimeWithMinutesAdded))) || ((recordTime.equals(otherRecord0) && recordID.equals(otherRecord2)) &&
+                    timeFinal.equals(otherRecordTimeWithMinutesAdded))) {
+                    shouldRemove = true;
+                    break;
+                }
+            }
+            
+            if (shouldRemove) {
+                iterator.remove();
+            }
+        }
+        
+        
+	    
+	    return tempSortedRentedList;
     }
 	
 }

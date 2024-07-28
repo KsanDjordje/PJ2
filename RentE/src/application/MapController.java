@@ -229,6 +229,9 @@ public class MapController implements Initializable{
 		 this.updateTree();
 	    
 	}
+	
+	
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		

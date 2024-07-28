@@ -19,6 +19,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import main.FileLoadData;
@@ -31,27 +33,46 @@ import main.User;
 public class Controller {
 
 	@FXML
+	AnchorPane pane;
+	@FXML
+	private Button loginButton;
+	@FXML
 	private Button logoutButton;
 	@FXML
 	private AnchorPane scenePane;
-	
+	@FXML
+	private TextField usernameField;
+	@FXML
+	private PasswordField passwordField;
 	private Stage stage;
 	private Scene scene;
 	private Parent root;
 	
-	
-	
+	//temp
+	private String secretUsername = "admin";
+	private String secretPassword = "admin";
+	@FXML
 	public void login(ActionEvent event) throws IOException, OutOfRadiusException {
 		
+		String username = usernameField.getText();
+		String password = passwordField.getText();
+		
+		if(username.equals(secretUsername) && password.equals(secretPassword)) {
+			
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Map.fxml"));
-		FileLoadData fileData = new FileLoadData("ovo.csv","rented.csv");
 		root = loader.load();
 		
 		MapController mapController = loader.getController();
-		
+		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		stage.setX(0);
+		stage.setY(0);
+		scene = new Scene(root, 1280, 720);
+		stage.setScene(scene);
+		stage.show();
 		MyDateParser dp = new MyDateParser();
 
-		
+		FileLoadData fileData = new FileLoadData("ovo.csv","rented.csv");
+
 		Vehicle[] vehicleList = new Vehicle[fileData.getAllVehicles().size()];
 		for(int i = 0; i < fileData.getAllVehicles().size(); i++) {
 			List<String> vehicleData = fileData.getAllVehicles().get(i);
@@ -156,10 +177,9 @@ public class Controller {
 		System.out.println("Total Promotion: " + totalPromotion);
 		System.out.println("Total Number Discount: " + totalNumDiscount);
 		System.out.println("Total Discount: " + totalDiscount);
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root, 1280, 720);
-		stage.setScene(scene);
-		stage.show();
+		}else {
+			System.out.println("Incorrect Login");
+		}
 	}
 	public void closeProgram(ActionEvent event) {
 		
@@ -173,6 +193,7 @@ public class Controller {
 			stage.close();
 		}
 		
-		
 	}
+	
+
 }
