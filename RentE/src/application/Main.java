@@ -27,6 +27,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.scene.control.Alert.AlertType;
 
 
@@ -120,7 +121,9 @@ public class Main extends Application {
 			
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			primaryStage.setScene(scene);
+	        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("logo.jpeg")));
+	        primaryStage.setTitle("E-mobility");
+	        primaryStage.setScene(scene);
 			primaryStage.show();
 			
 			primaryStage.setOnCloseRequest(event -> {
@@ -135,7 +138,7 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
-public void logout(Stage stage) {
+	public void logout(Stage stage) {
 		
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Logout");

@@ -47,9 +47,12 @@ public class MapController implements Initializable{
 	private TreeView<String> rentedTreeView;
 	@FXML
 	private Parent root;
+	@FXML
+	private Button simulationButton;
 	private Stage stage;
 	private Scene scene;
 	private FileLoadData data;
+	private LocalDate currentDate;
 	Vehicle[] vehicleList;
 	Rent[] rentedList;
     private ExecutorService executorService; // or however many threads you need
@@ -118,108 +121,114 @@ public class MapController implements Initializable{
         }
     }
     
-
+    public void startSimulation() {
+    	
+    	String targetDate = getDate();
+    	System.out.println(targetDate);
+    	if(targetDate == "") {
+    		System.out.println("jesam");
+    		for(Rent rented : rentedList) {
+    			System.out.println(rented.getDateTime());
+    		}
+    	}
+    	
+    }
     
 	
-	
-	
-	public void logout(ActionEvent event) throws IOException {
-		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
-		root = loader.load();
-		
-		Controller controller= loader.getController();
-		
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
-	}
-	
-	public void closeProgram(ActionEvent event) {
+    public void closeProgram(ActionEvent event) {
 		
 		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Logout");
+		alert.setTitle("Close Program");
 		alert.setHeaderText(null);
-		alert.setContentText("Are you sure you want to logout?");
+		alert.setContentText("Are you sure you want to close the program?");
 		
 		if(alert.showAndWait().get() == ButtonType.OK) {
 			stage = (Stage) scenePane.getScene().getWindow();
-			System.out.println("logout");
+			System.out.println("closed");
 			stage.close();
 		}
 		
 		
 	}
+	
+	public void logout(ActionEvent event) throws IOException {
+		
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Logout");
+		alert.setHeaderText(null);
+		alert.setContentText("Are you sure you want to logout?");
+		if(alert.showAndWait().get() == ButtonType.OK) {
+			
+			
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
+			root = loader.load();
+			
+			Controller controller= loader.getController();
+			
+			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			scene = new Scene(root);
+			stage.setScene(scene);
+			stage.show();
+			System.out.println("logout");
+		}
+		
+	}
+	
+	
 	public void updateTree() {
 		
 		String targetDate = getDate();
-		TreeItem<String> rootItem = new TreeItem<>("Vehicles");
-        if (data.getRentedCars().size() > 0) {
-            TreeItem<String> carBranchItem = new TreeItem<>("Cars");
-            for(List<String> val : data.getRentedCars()) {
-            	
-            	String[] temp = val.get(0).split(" ");
-            	if(temp[0].equals(targetDate)) {
-            		
-            		TreeItem<String> carItem = new TreeItem<>(val.get(2));
-            		for(Vehicle veh : vehicleList) {
-            			if(veh instanceof Car) {
-            				Car car = (Car)veh;
-            				if(car.getId().equals(val.get(2))) {
-            					TreeItem<String> carBat = new TreeItem<>("Battery: " + String.valueOf(car.getCurrentBatteryLevel()));
-            					
-            					carItem.getChildren().addAll(carBat);
-            				}
-            			}
-            			
-            		}
-                    carBranchItem.getChildren().add(carItem);
-            	}
-            	
-            }
-            
-            rootItem.getChildren().add(carBranchItem);
-        }
-        if (data.getRentedBikes().size() > 0) {
-            TreeItem<String> bikeBranchItem = new TreeItem<>("Bikes");
-            
-            for(List<String> val : data.getRentedBikes()) {
-            	
-            	String[] temp = val.get(0).split(" ");
-            	if(temp[0].equals(targetDate)) {
-            		
-            		TreeItem<String> carItem = new TreeItem<>(val.get(2));
-            		bikeBranchItem.getChildren().add(carItem);
-            	}
-            	
-            }
-            
-            rootItem.getChildren().add(bikeBranchItem);
-            
-            
-        }
-        if (data.getRentedScooters().size() > 0) {
-            TreeItem<String> scooterBranchItem = new TreeItem<>("Scooters");
-            
-            for(List<String> val : data.getRentedScooters()) {
-            	
-            	String[] temp = val.get(0).split(" ");
-            	if(temp[0].equals(targetDate)) {
-            		
-            		TreeItem<String> carItem = new TreeItem<>(val.get(2));
-            		scooterBranchItem.getChildren().add(carItem);
-            	}
-            	
-            }
-            
-            
-            
-            rootItem.getChildren().add(scooterBranchItem);
-        }
+	    TreeItem<String> rootItem = new TreeItem<>("Vehicles");
 
-        // Set the root item to the TreeView
-        rentedTreeView.setRoot(rootItem);
+	    // Update or create the Car branch
+	    TreeItem<String> carBranchItem = getOrCreateBranch(rootItem, "Cars");
+	    updateVehicleBranch(carBranchItem, data.getRentedCars(), targetDate, true);
+
+	    // Update or create the Bike branch
+	    TreeItem<String> bikeBranchItem = getOrCreateBranch(rootItem, "Bikes");
+	    updateVehicleBranch(bikeBranchItem, data.getRentedBikes(), targetDate, false);
+
+	    // Update or create the Scooter branch
+	    TreeItem<String> scooterBranchItem = getOrCreateBranch(rootItem, "Scooters");
+	    updateVehicleBranch(scooterBranchItem, data.getRentedScooters(), targetDate, false);
+
+	    // Set the root item to the TreeView
+	    rentedTreeView.setRoot(rootItem);
+	}
+	private TreeItem<String> getOrCreateBranch(TreeItem<String> root, String branchName) {
+	    for (TreeItem<String> child : root.getChildren()) {
+	        if (child.getValue().equals(branchName)) {
+	            return child;
+	        }
+	    }
+	    TreeItem<String> newBranch = new TreeItem<>(branchName);
+	    root.getChildren().add(newBranch);
+	    return newBranch;
+	}
+
+	private void updateVehicleBranch(TreeItem<String> branch, List<List<String>> rentedVehicles, String targetDate, boolean isCar) {
+	    branch.getChildren().clear();  // Clear existing items
+
+	    for (List<String> val : rentedVehicles) {
+	        String[] temp = val.get(0).split(" ");
+	        if (temp[0].equals(targetDate)) {
+	            TreeItem<String> vehicleItem = new TreeItem<>(val.get(2));
+
+	            if (isCar) {
+	                for (Vehicle veh : vehicleList) {
+	                    if (veh instanceof Car) {
+	                        Car car = (Car) veh;
+	                        if (car.getId().equals(val.get(2))) {
+	                            TreeItem<String> batteryItem = new TreeItem<>("Battery: " + String.valueOf(car.getCurrentBatteryLevel()));
+	                            vehicleItem.getChildren().add(batteryItem);
+	                        }
+	                    }
+	                }
+	            }
+
+	            branch.getChildren().add(vehicleItem);
+	        }
+	    }
 	}
 	public void loadData(FileLoadData data, Vehicle[] veh,Rent[] rented) {
 		 this.data = data;
