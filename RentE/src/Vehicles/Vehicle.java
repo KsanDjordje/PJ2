@@ -2,7 +2,7 @@ package Vehicles;
 
 import java.time.LocalDateTime;
 
-import SimulationPJ2.RandomStringGenerator;
+import SimulationPJ2.RandomFunctions;
 
 
 public abstract class Vehicle {
@@ -45,8 +45,13 @@ public abstract class Vehicle {
 		return currentBatteryLevel;
 	}
     
-    public void chargeBattery(float amount) {
+    public boolean chargeBattery(float amount) {
         this.currentBatteryLevel = Math.min(100, this.currentBatteryLevel + amount);
+        System.out.println(this.getId() + "battery charged to: " + this.currentBatteryLevel);
+        if (this.currentBatteryLevel < 100) 
+        	return true;
+        else 
+        	return false;
     }
 
     public void dischargeBattery(float amount) {
@@ -86,7 +91,7 @@ public abstract class Vehicle {
                 "Engine knocking - unusual sounds from the engine compartment."
             };
     	
-    	RandomStringGenerator gen = new RandomStringGenerator();
+    	RandomFunctions gen = new RandomFunctions();
     	this.hasMalfunction = true;
     	this.malfunctionDescription = malfunctionMessages[gen.generateRandomNumber(0, malfunctionMessages.length)];
     	this.malfunctionTime = malfunctionTime;

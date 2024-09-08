@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -521,6 +522,10 @@
          <font>
             <Font size="20.0" />
          </font>
+         <tooltip>
+            <Tooltip text="To run the entire simulation leave the date empty, to simulate a specific date, select that date." />
+         </tooltip>
       </Button>
+      <Button fx:id="testButton" layoutX="125.0" layoutY="353.0" mnemonicParsing="false" onAction="#resetMap" text="Button" />
    </children>
 </AnchorPane>

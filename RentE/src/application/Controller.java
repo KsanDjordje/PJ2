@@ -75,11 +75,12 @@ public class Controller {
 	        Rent[] rentedList = loadRents(fileData, dp, vehicleList);
 	        
 	        generateInvoices(rentedList);
-	        
 	        calculateTotals(rentedList);
+	        
 	        
 	        mapController.loadData(fileData, vehicleList, rentedList);
 	        
+	        mapController.initializeExecutorService(50);
 	    } else {
 	        System.out.println("Incorrect Login");
 	    }

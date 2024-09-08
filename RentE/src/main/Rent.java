@@ -131,7 +131,9 @@ public class Rent {
 	public Vehicle getVehicle() {
 		return this.vehicle;
 	}
-
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
+	}
 	
 	
 }

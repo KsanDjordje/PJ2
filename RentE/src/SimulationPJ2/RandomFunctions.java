@@ -2,7 +2,9 @@ package SimulationPJ2;
 
 import java.util.Random;
 
-public class RandomStringGenerator {
+import javafx.scene.paint.Color;
+
+public class RandomFunctions {
 	private static final String[] ForeignCharacters = {
 	        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 	        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
@@ -39,6 +41,33 @@ public class RandomStringGenerator {
             return true;
         } else {
             return false;
+        }
+    }
+	/**
+     * Generates a color based on the thread's name.
+     * 
+     * @param threadName The name of the thread (e.g., "Thread-12").
+     * @return A Color object derived from the thread number.
+     */
+    public Color generateColorFromThreadName(String threadName) {
+        // Extract the number from the thread name (e.g., Thread-12)
+        String[] parts = threadName.split("-");
+        if (parts.length < 2) {
+            return Color.GRAY; // Default color if extraction fails
+        }
+
+        try {
+            // Parse the thread number from the thread name
+            int threadNumber = Integer.parseInt(parts[1]);
+
+            // Ensure we have a maximum of 25 threads
+            int numberOfThreads = 25;
+            // Generate a hue value to evenly distribute colors
+            double hue = (threadNumber % numberOfThreads) / (double) numberOfThreads; // Hue between 0 and 1
+            return Color.hsb(hue * 360, 0.8, 0.8); // Use high saturation and brightness
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return Color.GRAY; // Default color on error
         }
     }
 }
