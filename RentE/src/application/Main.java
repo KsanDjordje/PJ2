@@ -58,8 +58,6 @@ public class Main extends Application {
 			Car auto = new Car("a", "a", "a", 50, 2, purchaseDate, "opis");
 			Rent rent = new Rent(user,start,loc,locc,1,auto,true);
 			
-			
-			
 			// path test
 			PathFinder path = new PathFinder(rent.getLocationStart(), rent.getLocationEnd());
 			Location[] putanja = path.getPathDijkstra();
