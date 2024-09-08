@@ -80,7 +80,6 @@ public class Controller {
 	        
 	        mapController.loadData(fileData, vehicleList, rentedList);
 	        
-	        mapController.initializeExecutorService(50);
 	    } else {
 	        System.out.println("Incorrect Login");
 	    }

@@ -70,18 +70,15 @@ public class MapController implements Initializable{
 	private String currentDateTime;
 	Vehicle[] vehicleList;
 	Rent[] rentedList;
-    private ExecutorService executorService; // or however many threads you need
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	private TreeItem<String> rootTree = new TreeItem<>("Vehicles");
-    
+	
+	private final Object treeLock = new Object(); // Lock object for synchronizing access to TreeItem
 	@FXML
 	private void initialize() {
         
     }
-	public void initializeExecutorService(int nThreads) {
-        executorService = Executors.newFixedThreadPool(nThreads);
-    }
+	
 
 	// helping function to reset the map to its default state in case of any errors
 	@FXML
@@ -119,7 +116,46 @@ public class MapController implements Initializable{
         label.setGraphic(icon);
         return label;
     }
-    private final Object treeLock = new Object(); // Lock object for synchronizing access to TreeItem
+    
+    private void updateBatAndLoc(Vehicle vehicle, Location loc) {
+    	RandomFunctions func = new RandomFunctions();
+        String threadName = Thread.currentThread().getName();
+        Color threadColor = func.generateColorFromThreadName(threadName);
+        
+        String className = vehicle.getClass().getSimpleName(); // Use getSimpleName() to avoid package info
+        String cutClassName = className + "s"; 
+    	synchronized (treeLock) {
+            TreeItem<String> vehicleItem = findTreeItem(rootTree, cutClassName);
+            if (vehicleItem == null) {
+                vehicleItem = new TreeItem<>(cutClassName);
+                rootTree.getChildren().add(vehicleItem);
+            }
+
+            TreeItem<String> idItem = findTreeItem(vehicleItem, vehicle.getId());
+            if (idItem == null) {
+                idItem = new TreeItem<>(vehicle.getId());
+
+                // Add battery level and location as children of idItem
+                Float temp = vehicle.getCurrentBatteryLevel();
+                TreeItem<String> batteryItem = new TreeItem<>(temp.toString());
+                TreeItem<String> locationItem = new TreeItem<>(loc.toString());
+                idItem.getChildren().addAll(batteryItem, locationItem);
+                idItem.setExpanded(true);
+                // Add idItem to the vehicleItem's children
+                vehicleItem.getChildren().add(idItem);
+            } else {
+                // Update existing idItem with new battery level and location
+                idItem.getChildren().clear(); // Clear existing children
+
+                Float temp = vehicle.getCurrentBatteryLevel();
+                TreeItem<String> batteryItem = new TreeItem<>(temp.toString());
+                TreeItem<String> locationItem = new TreeItem<>(loc.toString());
+                idItem.getChildren().addAll(batteryItem, locationItem);
+                idItem.setExpanded(true);
+            }
+        }
+    }
+    
 
     private Vehicle moveVehicle(Location[] path, double time, Vehicle vehicle) {
         try {
@@ -136,35 +172,7 @@ public class MapController implements Initializable{
                 String cutClassName = className + "s"; // Assumes you are using plural form for class items
                 
                 // Synchronize access to tree structure updates
-                synchronized (treeLock) {
-                    TreeItem<String> vehicleItem = findTreeItem(rootTree, cutClassName);
-                    if (vehicleItem == null) {
-                        vehicleItem = new TreeItem<>(cutClassName);
-                        rootTree.getChildren().add(vehicleItem);
-                    }
-
-                    TreeItem<String> idItem = findTreeItem(vehicleItem, vehicle.getId());
-                    if (idItem == null) {
-                        idItem = new TreeItem<>(vehicle.getId());
-
-                        // Add battery level and location as children of idItem
-                        Float temp = vehicle.getCurrentBatteryLevel();
-                        TreeItem<String> batteryItem = new TreeItem<>(temp.toString());
-                        TreeItem<String> locationItem = new TreeItem<>(loc.toString());
-                        idItem.getChildren().addAll(batteryItem, locationItem);
-
-                        // Add idItem to the vehicleItem's children
-                        vehicleItem.getChildren().add(idItem);
-                    } else {
-                        // Update existing idItem with new battery level and location
-                        idItem.getChildren().clear(); // Clear existing children
-
-                        Float temp = vehicle.getCurrentBatteryLevel();
-                        TreeItem<String> batteryItem = new TreeItem<>(temp.toString());
-                        TreeItem<String> locationItem = new TreeItem<>(loc.toString());
-                        idItem.getChildren().addAll(batteryItem, locationItem);
-                    }
-                }
+                updateBatAndLoc(vehicle,loc);
 
                 // Ensure UI updates happen on the JavaFX Application Thread
                 Platform.runLater(() -> {
@@ -207,9 +215,6 @@ public class MapController implements Initializable{
         return (Rectangle) gridPane.getChildren().get(loc.getY() * gridPane.getColumnCount() + loc.getX());
     }
 
-    public void shutdown() {
-        executorService.shutdown();
-    }
 
 	public void selectItem() {
 		TreeItem<String> item = rentedTreeView.getSelectionModel().getSelectedItem();
@@ -421,18 +426,26 @@ public class MapController implements Initializable{
 		rootTree.getChildren().clear();
 	    TreeItem<String> rootItem = new TreeItem<>("Vehicles");
 	    rootItem.setExpanded(true);
+	    
+	    
 	    // Update or create the Car branch
 	    TreeItem<String> carBranchItem = getOrCreateBranch(rootItem, "Cars");
 	    updateVehicleBranch(carBranchItem, data.getRentedCars(), targetDate, true);
 	    carBranchItem.setExpanded(true);
+	    
+	    
 	    // Update or create the Bike branch
 	    TreeItem<String> bikeBranchItem = getOrCreateBranch(rootItem, "Bikes");
 	    updateVehicleBranch(bikeBranchItem, data.getRentedBikes(), targetDate, false);
 	    bikeBranchItem.setExpanded(true);
+	    
+	    
 	    // Update or create the Scooter branch
 	    TreeItem<String> scooterBranchItem = getOrCreateBranch(rootItem, "Scooters");
 	    updateVehicleBranch(scooterBranchItem, data.getRentedScooters(), targetDate, false);
 	    scooterBranchItem.setExpanded(true);
+	    
+	    
 	    rootTree = rootItem;
 	    // Set the root item to the TreeView
 	    rentedTreeView.setRoot(rootItem);
@@ -463,6 +476,7 @@ public class MapController implements Initializable{
 	                        if (car.getId().equals(val.get(2))) {
 	                            TreeItem<String> batteryItem = new TreeItem<>("Battery: " + String.valueOf(car.getCurrentBatteryLevel()));
 	                            vehicleItem.getChildren().add(batteryItem);
+	                            vehicleItem.setExpanded(true);
 	                        }
 	                    }
 	                }
@@ -485,9 +499,6 @@ public class MapController implements Initializable{
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
 
-		
-		
 	}
 }
