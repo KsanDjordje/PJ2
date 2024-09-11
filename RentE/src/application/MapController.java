@@ -20,6 +20,7 @@ import Vehicles.Car;
 import Vehicles.Vehicle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -36,6 +37,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -64,6 +66,14 @@ public class MapController implements Initializable{
 	private Parent root;
 	@FXML
 	private Button simulationButton;
+	
+	@FXML
+	private Button vehicleWindowButton;
+	@FXML
+	private Button malfunctionWindowButton;
+	@FXML
+	private Button resultWindowButton;
+	
 	private Stage stage;
 	private Scene scene;
 	private FileLoadData data;
@@ -109,59 +119,59 @@ public class MapController implements Initializable{
 		
 		
 	}
-	// Create a label with an icon in front
-    private Label createIconLabel(String id, Color color) {
-        Rectangle icon = new Rectangle(10, 10, color);
-        Label label = new Label(id);
-        label.setGraphic(icon);
-        return label;
-    }
+	
     
     private void updateBatAndLoc(Vehicle vehicle, Location loc) {
+    	
     	RandomFunctions func = new RandomFunctions();
         String threadName = Thread.currentThread().getName();
-        Color threadColor = func.generateColorFromThreadName(threadName);
+        Color threadColor = func.generateColorFromThreadIdentifier(vehicle.getId());
         
         String className = vehicle.getClass().getSimpleName(); // Use getSimpleName() to avoid package info
         String cutClassName = className + "s"; 
-    	synchronized (treeLock) {
-            TreeItem<String> vehicleItem = findTreeItem(rootTree, cutClassName);
-            if (vehicleItem == null) {
-                vehicleItem = new TreeItem<>(cutClassName);
-                rootTree.getChildren().add(vehicleItem);
-            }
+    	
+    	Platform.runLater(()-> {synchronized (treeLock) {
+            TreeItem<String> vehicleItem = getOrCreateBranch(rootTree, cutClassName);
 
-            TreeItem<String> idItem = findTreeItem(vehicleItem, vehicle.getId());
-            if (idItem == null) {
-                idItem = new TreeItem<>(vehicle.getId());
+            // Create an HBox to hold the colored rectangle and vehicle ID
+            HBox idBox = new HBox();
+            
+            // Create a colored rectangle with thread-specific color
+            Rectangle colorRect = new Rectangle(10, 10);  // 10x10 rectangle
+            colorRect.setFill(threadColor);
 
-                // Add battery level and location as children of idItem
-                Float temp = vehicle.getCurrentBatteryLevel();
-                TreeItem<String> batteryItem = new TreeItem<>(temp.toString());
-                TreeItem<String> locationItem = new TreeItem<>(loc.toString());
-                idItem.getChildren().addAll(batteryItem, locationItem);
-                idItem.setExpanded(true);
-                // Add idItem to the vehicleItem's children
-                vehicleItem.getChildren().add(idItem);
-            } else {
-                // Update existing idItem with new battery level and location
-                idItem.getChildren().clear(); // Clear existing children
+            // Create a label for the vehicle ID
+            Label idLabel = new Label(vehicle.getId());
 
-                Float temp = vehicle.getCurrentBatteryLevel();
-                TreeItem<String> batteryItem = new TreeItem<>(temp.toString());
-                TreeItem<String> locationItem = new TreeItem<>(loc.toString());
-                idItem.getChildren().addAll(batteryItem, locationItem);
-                idItem.setExpanded(true);
-            }
-        }
+            // Add the rectangle and label to the HBox
+            idBox.getChildren().addAll(colorRect);
+            
+            // Wrap the HBox in a TreeItem
+            TreeItem<String> idItem = getOrCreateBranch(vehicleItem, vehicle.getId());
+            
+            idItem.setGraphic(idBox);  // Set the HBox as the graphic for this TreeItem
+
+            // Clear existing children and update with battery level and location
+            idItem.getChildren().clear(); 
+
+            Float batteryLevel = vehicle.getCurrentBatteryLevel();
+            String formattedBatteryLevel = String.format("%.1f", batteryLevel); // Round to 1 decimal place
+            TreeItem<String> batteryItem = new TreeItem<>(formattedBatteryLevel + "%");        
+            TreeItem<String> locationItem = new TreeItem<>(loc.toString());
+            
+            idItem.getChildren().addAll(batteryItem, locationItem);
+            idItem.setExpanded(true);
+        }});
+        
+        
+        
     }
-    
 
     private Vehicle moveVehicle(Location[] path, double time, Vehicle vehicle) {
         try {
             RandomFunctions func = new RandomFunctions();
             String threadName = Thread.currentThread().getName();
-            Color threadColor = func.generateColorFromThreadName(threadName);
+            Color threadColor = func.generateColorFromThreadIdentifier(vehicle.getId());
             int numberOfFields = path.length;
             double timePerField = time / numberOfFields;
 
@@ -271,7 +281,9 @@ public class MapController implements Initializable{
                                     while (veh.chargeBattery(1)) ;
                                 }
                                 resetMap();
+                                Platform.runLater(() -> updateTree());
                                 Thread.sleep(2500);
+                                
 
                                 // Clear the threads list for the new day
                                 threads.clear();
@@ -349,7 +361,18 @@ public class MapController implements Initializable{
                             Thread.currentThread().interrupt();  // Handle thread interruption
                         }
                     }
+                    System.out.println("Day Finished. Recharging...");
+                    Thread.sleep(2500);
+                    for (Vehicle veh : vehicleList) {
+                        while (veh.chargeBattery(1)) ;
+                    }
+                    resetMap();
+                    Platform.runLater(() -> updateTree());
+                    Thread.sleep(2500);
+                    
 
+                    // Clear the threads list for the new day
+                    threads.clear();
                     resetMap();  // Reset the map once all threads are done
                 }
 
@@ -365,21 +388,61 @@ public class MapController implements Initializable{
 
 
     public void closeProgram(ActionEvent event) {
-		
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Close Program");
-		alert.setHeaderText(null);
-		alert.setContentText("Are you sure you want to close the program?");
-		
-		if(alert.showAndWait().get() == ButtonType.OK) {
-			stage = (Stage) scenePane.getScene().getWindow();
-			System.out.println("closed");
-			stage.close();
-			}
-		
-		
+    	Utility.closeProgram(stage,scenePane);
+	}
+    
+    @FXML
+    private void vehicleView(ActionEvent event) throws IOException {
+    	updateCurrentWindow(event, "vehicleView.fxml", 1280, 720);
+    	
 	}
 	
+    @FXML
+    private void malfunctionView(ActionEvent event) throws IOException {
+    	updateCurrentWindow(event, "malfunctionView.fxml", 1280, 720);
+	}
+    @FXML
+    private void resultView(ActionEvent event) throws IOException {
+    	updateCurrentWindow(event, "resultView.fxml", 1280, 720);
+	}
+    private void openWindow(String fxmlFileName, double width, double height) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFileName));
+        Parent parent = loader.load();
+
+        
+        Controller controller = loader.getController();
+
+        Stage stage = new Stage();
+        stage.setX(0);
+        stage.setY(0);
+        Scene scene = new Scene(parent, width, height);
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    private void updateCurrentWindow(ActionEvent event, String fxmlFileName, double width, double height) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFileName));
+        Parent parent = loader.load();
+        if(fxmlFileName.equals("vehicleView.fxml")) {
+            VehicleViewController controller = loader.getController();
+        }else if(fxmlFileName.equals("malfunctionView.fxmll")) {
+        	MalfunctionController controller = loader.getController();
+
+        }else if(fxmlFileName.equals("resultView.fxml")) {
+            VehicleViewController controller = loader.getController();
+
+        }else {
+        	
+        }
+
+        // Get the current stage from the event source
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setX(0);
+        stage.setY(0);
+        Scene scene = new Scene(parent, width, height);
+        stage.setScene(scene);
+    }
+
 	public void logout(ActionEvent event) throws IOException {
 		
 		Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -404,21 +467,6 @@ public class MapController implements Initializable{
 	}
 	
 
-	private TreeItem<String> findTreeItem(TreeItem<String> root, String value) {
-        if (root == null || value == null) {
-            return null;
-        }
-        if (root.getValue().equals(value)) {
-            return root;
-        }
-        for (TreeItem<String> child : root.getChildren()) {
-            TreeItem<String> found = findTreeItem(child, value);
-            if (found != null) {
-                return found;
-            }
-        }
-        return null;
-    }
 
 	public void updateTree() {
 		
@@ -434,8 +482,8 @@ public class MapController implements Initializable{
 	    carBranchItem.setExpanded(true);
 	    
 	    
-	    // Update or create the Bike branch
-	    TreeItem<String> bikeBranchItem = getOrCreateBranch(rootItem, "Bikes");
+	 // Update or create the Bike branch
+	    TreeItem<String> bikeBranchItem = getOrCreateBranch(rootItem, "Bicycles");
 	    updateVehicleBranch(bikeBranchItem, data.getRentedBikes(), targetDate, false);
 	    bikeBranchItem.setExpanded(true);
 	    
@@ -444,6 +492,7 @@ public class MapController implements Initializable{
 	    TreeItem<String> scooterBranchItem = getOrCreateBranch(rootItem, "Scooters");
 	    updateVehicleBranch(scooterBranchItem, data.getRentedScooters(), targetDate, false);
 	    scooterBranchItem.setExpanded(true);
+	    
 	    
 	    
 	    rootTree = rootItem;
@@ -481,7 +530,7 @@ public class MapController implements Initializable{
 	                    }
 	                }
 	            }
-
+	            vehicleItem.setExpanded(true);
 	            branch.getChildren().add(vehicleItem);
 	        }
 	    }

@@ -56,50 +56,50 @@ public class Main extends Application {
 			LocalDate purchaseDate = LocalDate.of(2024, Month.JULY, 4);
 
 			Car auto = new Car("a", "a", "a", 50, 2, purchaseDate, "opis");
-			Rent rent = new Rent(user,start,loc,locc,1,auto,true);
+			Rent rent = new Rent(user,start,loc,locc,1,auto,true, false);
 			
-			// path test
-			PathFinder path = new PathFinder(rent.getLocationStart(), rent.getLocationEnd());
-			Location[] putanja = path.getPathDijkstra();
-			
-			
-			Rent rent2 = new Rent(user,start,new Location (0,0),new  Location (19,19),1,auto,true);
-			
-			PathFinder path2 = new PathFinder(rent2.getLocationStart(), rent2.getLocationEnd());
-			Location[] putanja2 = path2.getPathDijkstra();
-			
-			Rent rent3 = new Rent(user,start,new Location (16,15),new  Location (10,2),1,auto,true);
-			
-			PathFinder path3 = new PathFinder(rent3.getLocationStart(), rent3.getLocationEnd());
-			Location[] putanja3 = path3.getPathDijkstra();
-			
-			Rent rent4 = new Rent(user,start,new Location (3,7),new  Location (0,19),1,auto,true);
-			
-			PathFinder path4 = new PathFinder(rent4.getLocationStart(), rent4.getLocationEnd());
-			Location[] putanja4 = path4.getPathDijkstra();
-			
-			
-			
-			// path test
-			for(int i = 0; i < putanja.length;i++) {
-				System.out.println(putanja[i]);
-			}
-			
-			rent.generateInvoice("invoice");
-			
-			
-			PriceCalculator p = new PriceCalculator((Vehicle)auto, 10.0, path.isWide(), rent.getUser().getTimesRented() % 10 == 0, true);
-			//auto.reportMalfunction(start);
-			// price test
-			System.out.println(p.calculatePrice());
-			System.out.println(path.isWide());
-			System.out.println(p.getDiscountedAmmountFromNum());
-			System.out.println(p.getDiscountedAmmountFromPromotion());
-			
-			System.out.println(p.getPriceDiscounted());
-			System.out.println(p.getFullPrice());
-			System.out.println(p.getPrice());
-			System.out.println(auto.getMalfunctionDescription());
+//			// path test
+//			PathFinder path = new PathFinder(rent.getLocationStart(), rent.getLocationEnd());
+//			Location[] putanja = path.getPathDijkstra();
+//			
+//			
+//			Rent rent2 = new Rent(user,start,new Location (0,0),new  Location (19,19),1,auto,true, false);
+//			
+//			PathFinder path2 = new PathFinder(rent2.getLocationStart(), rent2.getLocationEnd());
+//			Location[] putanja2 = path2.getPathDijkstra();
+//			
+//			Rent rent3 = new Rent(user,start,new Location (16,15),new  Location (10,2),1,auto,true,true);
+//			
+//			PathFinder path3 = new PathFinder(rent3.getLocationStart(), rent3.getLocationEnd());
+//			Location[] putanja3 = path3.getPathDijkstra();
+//			
+//			Rent rent4 = new Rent(user,start,new Location (3,7),new  Location (0,19),1,auto,true,false);
+//			
+//			PathFinder path4 = new PathFinder(rent4.getLocationStart(), rent4.getLocationEnd());
+//			Location[] putanja4 = path4.getPathDijkstra();
+//			
+//			
+//			
+//			// path test
+//			for(int i = 0; i < putanja.length;i++) {
+//				System.out.println(putanja[i]);
+//			}
+//			
+//			rent.generateInvoice("invoice");
+//			
+//			
+//			PriceCalculator p = new PriceCalculator((Vehicle)auto, 10.0, path.isWide(), rent.getUser().getTimesRented() % 10 == 0, true);
+//			//auto.reportMalfunction(start);
+//			// price test
+//			System.out.println(p.calculatePrice());
+//			System.out.println(path.isWide());
+//			System.out.println(p.getDiscountedAmmountFromNum());
+//			System.out.println(p.getDiscountedAmmountFromPromotion());
+//			
+//			System.out.println(p.getPriceDiscounted());
+//			System.out.println(p.getFullPrice());
+//			System.out.println(p.getPrice());
+//			System.out.println(auto.getMalfunctionDescription());
 			
 			// temp movement test
 //			mapController.initializeExecutorService(10);

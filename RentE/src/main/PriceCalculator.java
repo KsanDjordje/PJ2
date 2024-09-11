@@ -77,7 +77,7 @@ public class PriceCalculator {
 		}
 		
 		
-		this.priceApplyMalfunction(this.vehicle.hasMalfunction());
+		this.priceApplyMalfunction(this.vehicle.getHasMalfunction());
 		this.priceTotal = applyDiscount();
 		return this.priceTotal;
 		//return applyDiscount(result);

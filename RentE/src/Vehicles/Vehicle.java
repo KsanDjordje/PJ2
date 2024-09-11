@@ -1,6 +1,12 @@
 package Vehicles;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import SimulationPJ2.RandomFunctions;
 
@@ -23,8 +29,15 @@ public abstract class Vehicle {
         this.purchasePrice = purchasePrice;
         this.currentBatteryLevel = currentBatteryLevel;
         this.hasMalfunction = false;
-        this.description = description;
+        if(description.isBlank()) {
+        	this.description =  " ";
+        }else {
+            this.description = description;
+        }
     }
+    
+    
+    
     public String getId() {
         return id;
     }
@@ -44,7 +57,9 @@ public abstract class Vehicle {
     public float getCurrentBatteryLevel() {
 		return currentBatteryLevel;
 	}
-    
+    public String getDescription() {
+    	return description;
+    }
     public boolean chargeBattery(float amount) {
         this.currentBatteryLevel = Math.min(100, this.currentBatteryLevel + amount);
         System.out.println(this.getId() + "battery charged to: " + this.currentBatteryLevel);
@@ -92,11 +107,42 @@ public abstract class Vehicle {
             };
     	
     	RandomFunctions gen = new RandomFunctions();
+    	
+    	
     	this.hasMalfunction = true;
     	this.malfunctionDescription = malfunctionMessages[gen.generateRandomNumber(0, malfunctionMessages.length)];
     	this.malfunctionTime = malfunctionTime;
+    	
+    	
+    	// Format the malfunction date for grouping
+        LocalDate date = malfunctionTime.toLocalDate();
+        String dateString = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        
+        // File for storing malfunctions
+        File file = new File("malfunctionList.txt");
+
+        // Use synchronized block to ensure only one thread writes to the file at a time
+        synchronized (file) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+                // Write malfunction information to the file, grouped by date
+                writer.write("Date: " + dateString + "\n");
+                writer.write("Vehicle: " + this.getId()+ "\n");
+
+                writer.write("Malfunction Time: " + malfunctionTime + "\n");
+                writer.write("Description: " + this.malfunctionDescription + "\n");
+                writer.write("---------------------------\n");
+                this.sendVehicleToRepair();
+            } catch (IOException e) {
+                System.err.println("Error writing to malfunction list file: " + e.getMessage());
+            }
+        }
     }
-    public Boolean hasMalfunction() {
+    public void sendVehicleToRepair() {
+    	this.hasMalfunction = false;
+    	this.malfunctionDescription = "" ;
+    	this.malfunctionTime = null;
+    }
+    public Boolean getHasMalfunction() {
     	return this.hasMalfunction;
     }
 	

@@ -14,7 +14,7 @@ public class Rent {
 	private Vehicle vehicle;
 	private Boolean promotion;
 	PriceCalculator price;
-	public Rent(User user, LocalDateTime dateTime, Location locationStart, Location locationEnd, int timeUsed, Vehicle vehicle, Boolean promotion) {
+	public Rent(User user, LocalDateTime dateTime, Location locationStart, Location locationEnd, int timeUsed, Vehicle vehicle, Boolean promotion, Boolean hadMalfunction) {
 	
 		if(vehicle instanceof Car) {
 			if((user.getIsLocal() != null) && (user.getUserID() != null) && (user.getDriversLicense() != null)) {
@@ -34,10 +34,14 @@ public class Rent {
 		this.timeUsed = timeUsed;
 		this.vehicle = vehicle;
 		this.promotion = promotion;
-		
+		if(hadMalfunction == true) {
+			this.vehicle.reportMalfunction(dateTime);
+		}
 		calculatePrice();
+		vehicle.sendVehicleToRepair();
 	}
 	public void calculatePrice() {
+		
 		PathFinder path = new PathFinder(locationStart, locationEnd);
 		this.price = new PriceCalculator(vehicle,timeUsed, path.isWide(),user.getTimesRented() % 10 == 0, promotion);
 		price.calculatePrice();

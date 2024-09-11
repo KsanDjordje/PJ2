@@ -43,31 +43,32 @@ public class RandomFunctions {
             return false;
         }
     }
-	/**
-     * Generates a color based on the thread's name.
+	
+    /**
+     * Generates a color based on an alphanumeric thread identifier.
      * 
-     * @param threadName The name of the thread (e.g., "Thread-12").
-     * @return A Color object derived from the thread number.
+     * @param threadIdentifier The alphanumeric identifier of the thread (e.g., "A1", "B2").
+     * @return A Color object derived from the string.
      */
-    public Color generateColorFromThreadName(String threadName) {
-        // Extract the number from the thread name (e.g., Thread-12)
-        String[] parts = threadName.split("-");
-        if (parts.length < 2) {
-            return Color.GRAY; // Default color if extraction fails
+    public Color generateColorFromThreadIdentifier(String threadIdentifier) {
+        if (threadIdentifier == null || threadIdentifier.isEmpty()) {
+            return Color.GRAY; // Default color if the identifier is invalid
         }
 
-        try {
-            // Parse the thread number from the thread name
-            int threadNumber = Integer.parseInt(parts[1]);
+        // Convert the thread identifier into a unique number by combining the characters
+        int uniqueNumber = 0;
 
-            // Ensure we have a maximum of 25 threads
-            int numberOfThreads = 25;
-            // Generate a hue value to evenly distribute colors
-            double hue = (threadNumber % numberOfThreads) / (double) numberOfThreads; // Hue between 0 and 1
-            return Color.hsb(hue * 360, 0.8, 0.8); // Use high saturation and brightness
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            return Color.GRAY; // Default color on error
+        for (char ch : threadIdentifier.toCharArray()) {
+            // Accumulate the character values into a unique number
+            uniqueNumber += ch;
         }
+
+        // Ensure we handle a reasonable number of unique colors (e.g., 25 distinct colors)
+        int numberOfColors = 25;
+        // Generate a hue value to evenly distribute colors
+        double hue = (uniqueNumber % numberOfColors) / (double) numberOfColors; // Hue between 0 and 1
+
+        // Return a color based on the calculated hue, with fixed saturation and brightness
+        return Color.hsb(hue * 360, 0.8, 0.8); // High saturation and brightness
     }
 }
