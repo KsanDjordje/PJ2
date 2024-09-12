@@ -39,10 +39,6 @@ public class Main extends Application {
 			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
 			
-			
-			
-			
-			
             Parent root = loader.load();
             Controller controller = loader.getController();
 			//Parent root = FXMLLoader.load(getClass().getResource("Map.fxml"));            
@@ -107,15 +103,7 @@ public class Main extends Application {
 //			mapController.simulateMovement(putanja2);
 //			mapController.simulateMovement(putanja3);
 //			mapController.simulateMovement(putanja4);
-				
-				
-				
-			
-			
-			
-			
-			
-			
+	
 			
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

@@ -30,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import main.BusinessResultsReport;
 import main.FileDeleter;
 import main.FileLoadData;
 import main.MyDateParser;
@@ -121,19 +122,24 @@ public class MalfunctionController {
 	
 	@FXML
 	public void goBackToMap(ActionEvent event)throws IOException, OutOfRadiusException{
-	FileDeleter.deleteFileIfExists("malfunctionList.txt");
-		initializeMap(event);
+		FileDeleter.deleteFileIfExists("malfunctionList.txt");
+		
+        initializeMap(event);
 
         MyDateParser dp = new MyDateParser();
         
         FileLoadData fileData = new FileLoadData("ovo.csv", "rented.csv");
-
-        
         
         SimulationFunctions sim  = new SimulationFunctions();
+
         VehicleFunctions veh = new VehicleFunctions();
         Vehicle[] vehicleList = veh.loadVehicles(fileData, dp);
         Rent[] rentedList = sim.loadRents(fileData, dp, vehicleList);
+        BusinessResultsReport rep  = new BusinessResultsReport();
+        for(int i = 0; i <   rentedList.length; i++) {
+        	rep.dailyReport(rentedList[i].getDateTime().toLocalDate(), rentedList[i].getFullPrice(), rentedList[i].getTotalDiscount(), rentedList[i].getPromo(), rentedList[i].getDiscount(), rentedList[i].getIsInnerCity(), rentedList[i].getHadMalfunction(), rentedList[i].getVehicle());
+        }
+        System.out.println(rep);
         sim.generateInvoices(rentedList);
         sim.calculateTotals(rentedList);
         

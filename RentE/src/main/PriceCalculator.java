@@ -56,7 +56,13 @@ public class PriceCalculator {
 			e.printStackTrace();
 		}
 	}
-	
+	public void applyMalfunction() {
+		this.price = 0.0;
+		this.priceTotal = 0.0;
+		this.discountTotal = 0.0;
+		this.discountPromTotal = 0.0;
+		this.priceDiscounted = 0.0;
+	}
 	public double calculatePrice() {
 		double distance = 0.0;
 		

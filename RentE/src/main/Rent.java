@@ -14,6 +14,9 @@ public class Rent {
 	private Vehicle vehicle;
 	private Boolean promotion;
 	PriceCalculator price;
+	Boolean hadMalfunction;
+	Boolean isInnerCity;
+	
 	public Rent(User user, LocalDateTime dateTime, Location locationStart, Location locationEnd, int timeUsed, Vehicle vehicle, Boolean promotion, Boolean hadMalfunction) {
 	
 		if(vehicle instanceof Car) {
@@ -34,6 +37,8 @@ public class Rent {
 		this.timeUsed = timeUsed;
 		this.vehicle = vehicle;
 		this.promotion = promotion;
+		this.hadMalfunction = hadMalfunction;
+		this.isInnerCity = true;
 		if(hadMalfunction == true) {
 			this.vehicle.reportMalfunction(dateTime);
 		}
@@ -43,7 +48,20 @@ public class Rent {
 	public void calculatePrice() {
 		
 		PathFinder path = new PathFinder(locationStart, locationEnd);
-		this.price = new PriceCalculator(vehicle,timeUsed, path.isWide(),user.getTimesRented() % 10 == 0, promotion);
+		try {
+			path.getPathDijkstra();
+		} catch (OutOfRadiusException e) {
+			e.printStackTrace();
+		}
+		if(path.isWide()) {
+			this.isInnerCity = false; 
+		}
+		PriceCalculator cal =  new PriceCalculator(vehicle,timeUsed, path.isWide(),user.getTimesRented() % 10 == 0, promotion);
+		if(this.hadMalfunction) {
+			cal.applyMalfunction();
+		}
+		this.price = cal;
+		
 		price.calculatePrice();
 	}
 
@@ -92,7 +110,9 @@ public class Rent {
             e.printStackTrace();
         }
     }
-	
+	public double getFullPrice() {
+		return price.getFullPrice();
+	}
 	public double getTotal() {
         return price.getPrice();
     }
@@ -113,7 +133,9 @@ public class Rent {
 		return user;
 	}
 
-
+	public Boolean getIsInnerCity() {
+		return isInnerCity;
+	}
 	public LocalDateTime getDateTime() {
 		return dateTime;
 	}
@@ -127,7 +149,9 @@ public class Rent {
 	public Location getLocationStart() {
 		return locationStart;
 	}
-
+	public Boolean getHadMalfunction() {
+		return hadMalfunction;
+	}
 
 	public double getTimeUsed() {
 		return timeUsed;

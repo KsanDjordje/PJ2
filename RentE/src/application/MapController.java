@@ -163,8 +163,6 @@ public class MapController implements Initializable{
             idItem.setExpanded(true);
         }});
         
-        
-        
     }
 
     private Vehicle moveVehicle(Location[] path, double time, Vehicle vehicle) {
@@ -386,7 +384,6 @@ public class MapController implements Initializable{
     	
     }
 
-
     public void closeProgram(ActionEvent event) {
     	Utility.closeProgram(stage,scenePane);
 	}
@@ -429,7 +426,7 @@ public class MapController implements Initializable{
         	MalfunctionController controller = loader.getController();
 
         }else if(fxmlFileName.equals("resultView.fxml")) {
-            VehicleViewController controller = loader.getController();
+            ResultsController controller = loader.getController();
 
         }else {
         	
