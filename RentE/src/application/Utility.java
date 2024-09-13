@@ -7,7 +7,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class Utility {
-public static void closeProgram(Stage stage, AnchorPane scenePane) {
+	public static void closeProgram(Stage stage, AnchorPane scenePane) {
 		
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Close Program");
@@ -20,4 +20,7 @@ public static void closeProgram(Stage stage, AnchorPane scenePane) {
 		}
 		
 	}
+	
+	
+	
 }

@@ -103,7 +103,7 @@ public class Main extends Application {
 //			mapController.simulateMovement(putanja2);
 //			mapController.simulateMovement(putanja3);
 //			mapController.simulateMovement(putanja4);
-	
+
 			
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

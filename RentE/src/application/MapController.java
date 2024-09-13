@@ -31,6 +31,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
@@ -41,12 +42,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import main.BusinessResultsReport;
 import main.FileLoadData;
 import main.Location;
 import main.MyDateParser;
 import main.OutOfRadiusException;
 import main.PathFinder;
 import main.Rent;
+import main.TableResultsData;
 
 public class MapController implements Initializable{
 
@@ -73,7 +76,8 @@ public class MapController implements Initializable{
 	private Button malfunctionWindowButton;
 	@FXML
 	private Button resultWindowButton;
-	
+	BusinessResultsReport report;
+
 	private Stage stage;
 	private Scene scene;
 	private FileLoadData data;
@@ -84,10 +88,35 @@ public class MapController implements Initializable{
 	private TreeItem<String> rootTree = new TreeItem<>("Vehicles");
 	
 	private final Object treeLock = new Object(); // Lock object for synchronizing access to TreeItem
-	@FXML
-	private void initialize() {
-        
-    }
+	
+	private void loadDatePicker() {
+		
+		List<LocalDate> availableDates = this.getAvailableDates();
+		myDatePicker = new DatePicker();
+		myDatePicker.setDayCellFactory(picker -> new DateCell() {
+			
+			@Override
+			public void updateItem(LocalDate date, boolean empty) {
+				super.updateItem(date, empty);
+				if(date == null || !availableDates.contains(date)) {
+					setDisable(true);
+					setStyle("-fx-background-color: #ffc0cb;");
+				}
+			}
+		});
+		myDatePicker.setPromptText("Pick a date");
+
+	    // Optionally add an action handler
+	    myDatePicker.setOnAction(event -> getDate());
+
+	    // Position the DatePicker on the AnchorPane (adjust the layout coordinates as needed)
+	    AnchorPane.setLeftAnchor(myDatePicker, 61.0);
+	    AnchorPane.setTopAnchor(myDatePicker, 38.0);
+	    
+	  
+	    scenePane.getChildren().add(myDatePicker);
+	
+	}
 	
 
 	// helping function to reset the map to its default state in case of any errors
@@ -120,7 +149,33 @@ public class MapController implements Initializable{
 		
 	}
 	
-    
+	private List<LocalDate> getAvailableDates(){
+		
+		List<TableResultsData> dataList = loadData();
+		
+		List<LocalDate> list = new ArrayList<>();
+		
+		for (TableResultsData res : dataList) {
+	        list.add(res.getDate());
+	    }
+		
+		return list;
+	}
+	private List<TableResultsData> loadData(){
+		List<TableResultsData> dataList = new ArrayList<>();
+	    
+		for(int j = 0; j < report.getDailyEarnings().size(); j++) {
+		    for(int i = 0; i < report.getDailyEarnings().get(j).getEarningsList().size(); i++) {
+		    	dataList.add(new TableResultsData(report.getDailyEarnings().get(j).getDate(),report.getDailyEarnings().get(j).getEarningsList().get(i),
+		    			report.getDailyDiscount().get(j).getEarningsList().get(i),
+		    			report.getDailyDiscountPromotion().get(j).getEarningsList().get(i),
+		    			report.getDailyDiscountQuantity().get(j).getEarningsList().get(i),
+		    			report.getDailyMaintenancePrice().get(j).getEarningsList().get(i),
+		    			report.getDailyRepairPrice().get(j).getEarningsList().get(i)));
+		    }
+	    }
+		return dataList;
+	}
     private void updateBatAndLoc(Vehicle vehicle, Location loc) {
     	
     	RandomFunctions func = new RandomFunctions();
@@ -427,7 +482,8 @@ public class MapController implements Initializable{
 
         }else if(fxmlFileName.equals("resultView.fxml")) {
             ResultsController controller = loader.getController();
-
+            controller.setReport(this.report);
+            controller.open();
         }else {
         	
         }
@@ -532,12 +588,16 @@ public class MapController implements Initializable{
 	        }
 	    }
 	}
-	public void loadData(FileLoadData data, Vehicle[] veh,Rent[] rented) {
+	public void loadData(FileLoadData data, Vehicle[] veh,Rent[] rented, BusinessResultsReport report) {
 		 this.data = data;
 		 this.vehicleList = veh;
 		 this.rentedList = rented;
 		 
+		 this.report  = report;
+		 loadDatePicker();
 		 this.updateTree();
+		 
+		 
 	    
 	}
 	
@@ -545,6 +605,6 @@ public class MapController implements Initializable{
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-
+		
 	}
 }

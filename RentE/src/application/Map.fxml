@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MapController">
+<AnchorPane fx:id="scenePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MapController">
    <children>
       <GridPane fx:id="gridPane" layoutX="280.0" layoutY="50.0" prefHeight="500.0" prefWidth="1544.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="280.0" AnchorPane.rightAnchor="250.0" AnchorPane.topAnchor="50.0">
       	<columnConstraints>
@@ -510,7 +509,6 @@
             
          </children>                                                                                                            
       </GridPane>
-      <DatePicker fx:id="myDatePicker" layoutX="61.0" layoutY="38.0" onAction="#getDate" promptText="Pick a date" AnchorPane.leftAnchor="61.0" />
       <Text layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Date:" textAlignment="CENTER" wrappingWidth="61.13671875" AnchorPane.leftAnchor="2.0">
          <font>
             <Font name="Calibri Bold" size="24.0" />
@@ -526,7 +524,6 @@
             <Tooltip text="To run the entire simulation leave the date empty, to simulate a specific date, select that date." />
          </tooltip>
       </Button>
-      <Button fx:id="testButton" layoutX="113.0" layoutY="257.0" mnemonicParsing="false" onAction="#resetMap" text="Test" />
       <Button fx:id="vehicleWindowButton" layoutX="71.0" layoutY="320.0" mnemonicParsing="false" onAction="#vehicleView" prefHeight="80.0" prefWidth="139.0" text="Vehicle View" AnchorPane.leftAnchor="71.0" AnchorPane.topAnchor="320.0" />
       <Button fx:id="malfunctionWindowButton" layoutX="70.0" layoutY="413.0" mnemonicParsing="false" onAction="#malfunctionView" prefHeight="80.0" prefWidth="139.0" text="Malfunction View" AnchorPane.leftAnchor="70.0" AnchorPane.topAnchor="413.0" />
       <Button fx:id="resultWindowButton" layoutX="71.0" layoutY="500.0" mnemonicParsing="false" onAction="#resultView" prefHeight="80.0" prefWidth="139.0" text="Result View" AnchorPane.leftAnchor="71.0" AnchorPane.topAnchor="500.0" />

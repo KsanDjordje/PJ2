@@ -80,8 +80,9 @@ public class BusinessResultsReport {
                 } else if (vehicle instanceof Scooter) {
                     repairCost = vehicle.getPurchasePrice() * 0.02;
                 }
-                addEarningsToList(dailyRepairPrice, date, repairCost);
+                
             }
+            addEarningsToList(dailyRepairPrice, date, repairCost);
             totalEarnings += price;
             totalDiscount += discount;
             totalDiscountPromotion += promo;

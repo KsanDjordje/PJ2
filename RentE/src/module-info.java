@@ -6,6 +6,7 @@ module RentE {
 	
 	opens application to javafx.graphics, javafx.fxml;
 	opens Vehicles to javafx.base;
+	opens main to javafx.base;
 	
 
     

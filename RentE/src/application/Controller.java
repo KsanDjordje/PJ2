@@ -92,10 +92,10 @@ public class Controller {
 	        }
 	        System.out.println(rep);
 	        sim.generateInvoices(rentedList);
-	        sim.calculateTotals(rentedList);
+	        //sim.calculateTotals(rentedList);
 	        
 	        
-	        mapController.loadData(fileData, vehicleList, rentedList);
+	        mapController.loadData(fileData, vehicleList, rentedList, rep);
 	        
 	    } else {
 	        System.out.println("Incorrect Login");

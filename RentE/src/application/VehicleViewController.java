@@ -89,24 +89,34 @@ public class VehicleViewController {
         }
         System.out.println(rep);
         sim.generateInvoices(rentedList);
-        sim.calculateTotals(rentedList);
+        //sim.calculateTotals(rentedList);    
         
-        
-        mapController.loadData(fileData, vehicleList, rentedList);
+        mapController.loadData(fileData, vehicleList, rentedList, rep);
 	}
 
 	
 
 	private void initializeMap(ActionEvent event) throws IOException {
+		stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+	    // Save current position and size of the stage
+	    double currentX = stage.getX();
+	    double currentY = stage.getY();
+	    double currentWidth = stage.getWidth();
+	    double currentHeight = stage.getHeight();
+
 	    FXMLLoader loader = new FXMLLoader(getClass().getResource("Map.fxml"));
 	    root = loader.load();
 
 	    mapController = loader.getController();
-	    stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-	    stage.setX(0);
-	    stage.setY(0);
-	    scene = new Scene(root, 1280, 720);
+
+	    scene = new Scene(root, currentWidth, currentHeight); // Keep the current size
 	    stage.setScene(scene);
+
+	    // Restore the position
+	    stage.setX(currentX);
+	    stage.setY(currentY);
+
 	    stage.show();
 	}
 	@FXML
