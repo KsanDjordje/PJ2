@@ -60,7 +60,7 @@ import vehicles.Vehicle;
 public class MapController implements Initializable {
 
     @FXML
-    private Button testButton;
+    private Button serializerButton;
     @FXML
     private Button logoutButton;
     @FXML
@@ -503,6 +503,11 @@ public class MapController implements Initializable {
         updateCurrentWindow(event, "vehicleView.fxml", 1280, 720);
     }
 
+    @FXML
+    private void serializerView(ActionEvent event) throws IOException{
+        updateCurrentWindow(event, "serializerView.fxml", 1280, 720);
+
+    }
     /**
      * Opens the malfunction view when the corresponding action is triggered.
      *
@@ -567,6 +572,8 @@ public class MapController implements Initializable {
             ResultsController controller = loader.getController();
             controller.setReport(this.report);
             controller.open();
+        }else if (fxmlFileName.equals("serializerView")) {
+        	SerializerController controller = loader.getController();
         }
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

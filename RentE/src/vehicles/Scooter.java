@@ -1,11 +1,14 @@
 package vehicles;
 
+import java.io.Serializable;
+
 /**
  * The Scooter class represents a scooter that extends the Vehicle class.
  * It includes specific properties like the maximum speed of the scooter.
  */
-public class Scooter extends Vehicle {
-    // The maximum speed of the scooter
+public class Scooter extends Vehicle implements Serializable{
+	private static final long serialVersionUID = 1L;
+    /*** The maximum speed of the scooter */
     private float maxSpeed;
 
     /**

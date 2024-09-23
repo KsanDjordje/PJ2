@@ -1,16 +1,22 @@
 package vehicles;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
  * Represents a car which extends the Vehicle class and includes additional attributes such as 
  * purchase date and seating capacity.
  */
-public class Car extends Vehicle {
-    
+public class Car extends Vehicle implements Serializable{
+	private static final long serialVersionUID = 1L; // Serialization version identifier
+
+    /** Purchase date of the car. */
     private LocalDate purchaseDate;
-        private int capacity;
-    // Default seating capacity for a car
+
+    /** Seating capacity of the car. */
+    private int capacity;
+
+    /** Default seating capacity for a car. */
     private static final int DEFAULT_CAPACITY = 2;
     
     /**

@@ -1,6 +1,8 @@
 package application;
 
 import java.io.IOException;
+import java.util.List;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +25,8 @@ import rental.Rent;
 import rental.User;
 import reports.BusinessResultsReport;
 import reports.FileLoadData;
+import reports.VehicleEarned;
+import reports.VehicleEarnings;
 import simulationPJ2.SimulationFunctions;
 import vehicles.Vehicle;
 import vehicles.VehicleFunctions;
@@ -81,11 +85,19 @@ public class Controller {
             Vehicle[] vehicleList = veh.loadVehicles(fileData, dp);
             Rent[] rentedList = sim.loadRents(fileData, dp, vehicleList);
             BusinessResultsReport rep = new BusinessResultsReport();
-
+            VehicleEarnings ve = new VehicleEarnings(fileData);
             for (Rent rent : rentedList) {
+            	ve.vehicleEarned(rent.getVehicle(), rent.getFullPrice());
                 rep.dailyReport(rent.getDateTime().toLocalDate(), rent.getFullPrice(), rent.getTotalDiscount(),
                         rent.getPromo(), rent.getDiscount(), rent.getIsInnerCity(), rent.getHadMalfunction(), rent.getVehicle());
             }
+            
+            
+            for(VehicleEarned list : ve.getBestEarningVehicles()) {
+            	System.out.println(list.getVehicle().getId());
+            	System.out.println(list.getMoneyEarned());
+            }
+            
             System.out.println(rep);
             sim.generateInvoices(rentedList);
 

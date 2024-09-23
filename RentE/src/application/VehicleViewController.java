@@ -39,8 +39,7 @@ import vehicles.VehicleFunctions;
  * <p>This class does not require a constructor, as it relies on the default constructor.</p>
  */
 public class VehicleViewController {
-    @FXML
-    AnchorPane pane;
+    
     @FXML
     private AnchorPane scenePane;
     @FXML

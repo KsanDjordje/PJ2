@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,16 +16,33 @@ import myUtility.RandomFunctions;
  * battery level, and the ability to report malfunctions. It includes methods for charging and discharging 
  * the battery, reporting and repairing malfunctions.
  */
-public abstract class Vehicle {
-    
+public abstract class Vehicle implements Serializable {
+    private static final long serialVersionUID = 1L; // Serialization version identifier
+    /** Unique identifier for the vehicle. */
     protected String id;
+    
+    /** Manufacturer of the vehicle. */
     protected String manufacturer;
+    
+    /** Model of the vehicle. */
     protected String model;
+    
+    /** Purchase price of the vehicle. */
     protected double purchasePrice;
+    
+    /** Indicates if the vehicle has a malfunction. */
     private Boolean hasMalfunction;
+    
+    /** Description of the malfunction, if any. */
     private String malfunctionDescription;
+    
+    /** Time when the malfunction occurred. */
     private LocalDateTime malfunctionTime;
+    
+    /** Current battery level of the vehicle, represented as a percentage. */
     protected float currentBatteryLevel;
+    
+    /** Additional description of the vehicle. */
     protected String description;
     
     /**

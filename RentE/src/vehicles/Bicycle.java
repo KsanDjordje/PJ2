@@ -1,11 +1,15 @@
 package vehicles;
 
+import java.io.Serializable;
+
 /**
  * The Bicycle class represents a bicycle that extends the Vehicle class.
  * It includes specific properties like the range of the bicycle.
  */
-public class Bicycle extends Vehicle {
-    // The maximum range the bicycle can travel
+public class Bicycle extends Vehicle implements Serializable{
+	private static final long serialVersionUID = 1L;
+    
+    /** The maximum range the bicycle can travel. */
     private double range;
 
     /**

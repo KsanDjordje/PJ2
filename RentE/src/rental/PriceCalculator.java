@@ -22,7 +22,7 @@ public class PriceCalculator {
     private Boolean isWide;
     private Boolean applyDiscount;
     private boolean applyPromotion;
-    private double price;
+    private double fullPrice;
     private double priceTotal;
     private double discountTotal;
     private double discountPromTotal;
@@ -44,7 +44,7 @@ public class PriceCalculator {
 
         try (FileInputStream input = new FileInputStream(path)) {
             prop.load(input);
-            this.price = 0;
+            this.fullPrice = 0;
             this.priceTotal = 0;
             this.discountTotal = 0;
             this.discountPromTotal = 0;
@@ -70,7 +70,7 @@ public class PriceCalculator {
      * Resets the price to zero if there was a malfunction.
      */
     public void applyMalfunction() {
-        this.price = 0.0;
+        this.fullPrice = 0.0;
         this.priceTotal = 0.0;
         this.discountTotal = 0.0;
         this.discountPromTotal = 0.0;
@@ -87,11 +87,11 @@ public class PriceCalculator {
                                    this.timeTraveled * this.distanceNarrow;
 
         if (vehicle instanceof Car) {
-            this.price = distance * this.carUnitPrice;
+            this.fullPrice = distance * this.carUnitPrice;
         } else if (vehicle instanceof Bicycle) {
-            this.price = distance * this.bikeUnitPrice;
+            this.fullPrice = distance * this.bikeUnitPrice;
         } else {
-            this.price = distance * this.scooterUnitPrice;
+            this.fullPrice = distance * this.scooterUnitPrice;
         }
 
         priceApplyMalfunction(this.vehicle.getHasMalfunction());
@@ -106,14 +106,14 @@ public class PriceCalculator {
      */
     public double applyDiscount() {
         if (this.applyDiscount) {
-            this.discountTotal = this.price * this.discount;
+            this.discountTotal = this.fullPrice * this.discount;
         }
         if (this.applyPromotion) {
-            this.discountPromTotal = this.price * this.discountPromotion;
+            this.discountPromTotal = this.fullPrice * this.discountPromotion;
         }
         this.priceDiscounted = this.discountTotal + this.discountPromTotal;
         
-        return (price - this.priceDiscounted);
+        return (fullPrice - this.priceDiscounted);
     }
 
     /**
@@ -123,7 +123,7 @@ public class PriceCalculator {
      */
     public void priceApplyMalfunction(Boolean malfunction) {
         if (malfunction) {
-            this.price = 0;
+            this.fullPrice = 0;
         }
     }
 
@@ -160,7 +160,7 @@ public class PriceCalculator {
      * @return the full price
      */
     public double getFullPrice() {
-        return this.price;
+        return this.fullPrice;
     }
 
     /**

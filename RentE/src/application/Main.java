@@ -1,5 +1,10 @@
 package application;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -11,6 +16,7 @@ import location.OutOfRadiusException;
 import myUtility.FileLocation;
 import rental.Rent;
 import rental.User;
+import vehicles.Bicycle;
 import vehicles.Car;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -41,15 +47,8 @@ public class Main extends Application {
             Parent root = loader.load();
             Controller controller = loader.getController();
 
-            // Create a test user and rental data
-            User user = new User("test");
-            LocalDateTime start = LocalDateTime.of(2024, Month.JULY, 4, 0, 0);
-            Location loc = new Location(2, 5);
-            Location locc = new Location(10, 10);
-            LocalDate purchaseDate = LocalDate.of(2024, Month.JULY, 4);
-            Car auto = new Car("a", "a", "a", 50, 2, purchaseDate, "opis");
-            Rent rent = new Rent(user, start, loc, locc, 1, auto, true, false);
 
+         
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("newLogo.jpg")));
@@ -63,8 +62,6 @@ public class Main extends Application {
                 logout(primaryStage);
             });
 
-        } catch (OutOfRadiusException e) {
-            System.out.println("Invalid location");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -116,6 +116,7 @@ public class Rent {
                 "-------\n" +
                 "User: " + user.getName() + "\n" +
                 "Vehicle Type: " + vType + "\n" +
+                "Vehicle ID: " + vehicle.getId() + "\n" +
                 "Start Location: " + this.locationStart + "\n" +
                 "End Location: " + this.locationEnd + "\n" +
                 "Duration: " + this.timeUsed + " seconds\n" +
